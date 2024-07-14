@@ -16,7 +16,7 @@
 
 <div style="display: flex; justify-content: center; padding: 10px;">
 
-    <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; height: 200px;">
+    <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; min-height: 275px; overflow: auto;">
         <h3 style="margin-top: 35px;">Know Your Customer</h3>
         <p>Registration Number: <span id="registration_number_display" style="font-weight: bold;"></span></p>
         <p>Renewal Date: <span id="renewal_display" style="font-weight: bold;"></span></p>
@@ -33,7 +33,7 @@
         <p>Total Payable: <span id="total_payable" style="font-weight: bold;"></span></p>
     </div>
 
-    <div id="track-outcomes-box" style="background-image: url('{{ url_for('static', filename='bupa_track.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; background-color: white; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #0d1846; min-width: 30vw; height: 200px;">
+    <div id="track-outcomes-box" style="background-image: url('{{ url_for('static', filename='bupa_track.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; background-color: white; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #0d1846; min-width: 30vw; min-height: 275px;">
         <h3 style="margin-top: 35px;">Outcome</h3>
         <form id="outcomes-form" style="display: grid; gap: 10px;">
             <select id="offer" name="offer" class="input-field" style="font-size: 0.8em;" required>
