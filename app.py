@@ -3,6 +3,8 @@ import os
 
 # TO DO: add save outcomes for the searches
 # formatting
+# add edit functionaliry
+# add a back button
 
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
@@ -37,57 +39,34 @@ def intermediary():
 def training():
     return render_template('training.html')
 
-# @app.route('/fetch_customer', methods=['GET'])
-# def fetch_customer():
-#     registration_number = request.args.get('registration_number')
-#     if registration_number:
-#         customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
-#         if not customer.empty:
-#             customer_data = customer.to_dict(orient='records')[0]
-#
-#             # Extract required fields and convert types as necessary
-#             extracted_data = {
-#                 'registration-number': str(customer_data.get('registration-number', '')),
-#                 'renewal-date': str(customer_data.get('renewal-date', '')),
-#                 'payment-frequency': str(customer_data.get('payment-frequency', '')),
-#                 'annual-subs': str(customer_data.get('annual-subs', '')),
-#                 'months-arrears': str(customer_data.get('months-arrears', '')),
-#                 'months-free-last': str(customer_data.get('months-free-last', '')),
-#                 'months-free-this': str(customer_data.get('months-free-this', '')),
-#                 'color-segment': str(customer_data.get('color-segment', '')),
-#                 'claims-paid': str(customer_data.get('claims-paid', ''))
-#             }
-#             return jsonify({'success': True, 'customer': extracted_data})
-#     return jsonify({'success': False, 'message': 'Customer not found'})
-
 @app.route('/calculate_offer', methods=['POST'])
 def calculate_offer():
     try:
         data = request.json
         print(1)
+        # fetch registration-number from user input
         registration_number = str(data['registration-number'])
         print(2)
-        if registration_number:
-            customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
-            print(3)
-            if not customer.empty:
-                customer_data = customer.to_dict(orient='records')[0]
-                print(customer_data)
+        # filter for relevant customer based on registration-number
+        customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
 
-                # Extract required fields and convert types as necessary
-                user_info = {
-                    'registration': float(customer_data['registration-number']),
-                    'renewal': datetime.strptime(customer_data['renewal-date'], '%Y-%m-%d'),
-                    'payment_frequency': customer_data['payment-frequency'],
-                    'total_annual_subs': float(customer_data['annual-subs']),
-                    'arrears': float(customer_data['months-arrears']),
-                    'financial_distress': 0,
-                    'mf_last_year': str(customer_data['months-free-last']),
-                    'mf_this_year': float(customer_data['months-free-this']),
-                    'segment': str(customer_data['color-segment']),
-                    'claims_paid': str(customer_data['claims-paid'])
-                }
-                print(5)
+        # retrieve user_info
+        customer_data = customer.to_dict(orient='records')[0]
+
+        # convert types as necessary
+        user_info = {
+            'registration': float(customer_data['registration-number']),
+            'renewal': datetime.strptime(customer_data['renewal-date'], '%Y-%m-%d'),
+            'payment_frequency': customer_data['payment-frequency'],
+            'total_annual_subs': float(customer_data['annual-subs']),
+            'arrears': float(customer_data['months-arrears']),
+            'financial_distress': 0,
+            'mf_last_year': str(customer_data['months-free-last']),
+            'mf_this_year': float(customer_data['months-free-this']),
+            'segment': str(customer_data['color-segment']),
+            'claims_paid': str(customer_data['claims-paid'])
+        }
+        print(5)
 
         # user_info = extract_user_info(data)
         months_free = calculate_months_free(user_info)
@@ -107,7 +86,7 @@ def calculate_offer():
             'value': formatted_value,
             'total_payable': formatted_total_payable,
             'user_data': data
-        })
+                })
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
