@@ -1,0 +1,54 @@
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block title %}
+    <title>Welcome to Retain and Reward</title>
+{% endblock %}
+
+{% block content %}
+
+<!-- Apply a CSS reset here to remove any top margin that could be affecting the layout -->
+<div style="margin-left: 20px; margin-right: 20px; margin-top: -20px;">
+
+<div style="margin: 0; padding: 0;">
+
+    <!-- Header for Reactive Offers with full width -->
+    <!-- Include the picture as the background, adjusted to show a different part of the photo -->
+    <div style="text-align: center; padding: 20px; background-image: url('static/online-Person-sleeping-with-a-dog.png'); background-size: cover; background-position: center 35%; color: white; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; min-height: 200px;">
+        <h3 style="margin-top: 40px; margin-bottom: 20px; text-align: center;">Welcome to Reward and Retain</h3>
+        <h1 style="margin-top: 20px; margin-bottom: 20px; text-align: center;">What can we help you with today?</h1>
+    </div>
+
+</div>
+
+        <!-- Adding whitespace below the header -->
+        <div style="margin-bottom: 60px;"></div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <div class="box" style="background-color: #f1efeb; flex: 1; padding: 20px; border-radius: 5px; position: relative; height: 225px;">
+                <img src="{{ url_for('static', filename='direct.png') }}" alt="Magnifying Glass" style="width: 50px; position: absolute; top: 10px; left: 10px;">
+                <h2 style="margin-top: 60px; font-size: 18px;">Direct Offers</h2>
+                <p style="margin-bottom: 100px;">Retaining our most valuable direct customers who are on the verge of leaving by offering them tailored incentives.</p>
+                <a href="/direct" style="position: absolute; bottom: 10px; right: 10px;">
+                    <button style="font-family: 'Montserrat', sans-serif; background-color: #0079c8; color: white; border: none; padding: 10px 20px; border-radius: 5px;">Direct</button>
+                </a>
+            </div>
+            <div class="box" style="background-color: #f1efeb; flex: 1; padding: 20px; border-radius: 5px; margin-left: 30px; position: relative; height: 225px;">
+                <img src="{{ url_for('static', filename='intermediary.png') }}" alt="Heart on Hands" style="width: 50px; position: absolute; top: 10px; left: 10px;">
+                <h2 style="margin-top: 60px; font-size: 18px;">Intermediary Offers</h2>
+                <p style="margin-bottom: 100px;">Rewarding our most valuable intermediated customers who are on the verge of leaving or likely to switch.</p>
+                <a href="/intermediary" style="position: absolute; bottom: 10px; right: 10px;">
+                    <button style="font-family: 'Montserrat', sans-serif; background-color: #0079c8; color: white; border: none; padding: 10px 20px; border-radius: 5px;">Intermediary</button>
+                </a>
+            </div>
+            <div class="box" style="background-color: #f1efeb; flex: 1; padding: 20px; border-radius: 5px; margin-left: 30px; position: relative; height: 225px;">
+                <img src="{{ url_for('static', filename='heart.png') }}" alt="Hands" style="width: 50px; position: absolute; top: 10px; left: 10px;">
+                <h2 style="margin-top: 60px; font-size: 18px;">Training Hub</h2>
+                <p style="margin-bottom: 100px;">A place to familiarise yourself with Reward and Retain without impacting any customers.</p>
+                <a href="/training" style="position: absolute; bottom: 10px; right: 10px;">
+                    <button style="font-family: 'Montserrat', sans-serif; background-color: #0079c8; color: white; border: none; padding: 10px 20px; border-radius: 5px;">Training</button>
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

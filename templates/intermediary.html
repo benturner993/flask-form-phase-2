@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="text-align: center; padding: 20px; background-image: url('static/online-A-long-journey.png'); background-size: cover; background-position: center 52%; color: #0d1846; width: 100vw; position: relative; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; margin-top: -20px; min-height: 140px;">
+    <h1>Your Hub for Intermediated Retention</h1>
+</div>
+
+<div style="display: flex; justify-content: center; padding: 20px;">
+    <div style="width: 70vw;" id="form-container">
+        <form id="user-form" style="margin-top: 10px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(2, 45%); gap: 5%; position: relative;">
+        <select id="intermediary" name="intermediary" class="input-field" style="font-size: 0.8em;">
+            <option value="" disabled selected hidden>Select Intermediary</option>
+            <option value="Active Quote">🔴 Active Quote</option>
+            <option value="Advo Group Ltd">🔵 Advo Group Ltd</option>
+            <option value="Aston Lark">🔴 Aston Lark</option>
+            <option value="Baker Hudson">🔴 Baker Hudson</option>
+            <option value="Barts Insurance Brokers Ltd">🔵 Barts Insurance Brokers Ltd</option>
+            <option value="Benefits U (Medisurance & HCF)">🔴 Benefits U (Medisurance & HCF)</option>
+            <option value="Best Risk Management & Financial Services">🔵 Best Risk Management & Financial Services</option>
+            <option value="Better Health">🔴 Better Health</option>
+            <option value="Boitefin Ltd">🔵 Boitefin Ltd</option>
+            <option value="Clarity Insurance Services">🔴 Clarity Insurance Services</option>
+            <option value="Clear Finance">🔴 Clear Finance</option>
+            <option value="DJ Healthcare T/A Sherwood Healthcare">🔵 DJ Healthcare T/A Sherwood Healthcare</option>
+            <option value="Gallagher Risk & Reward">🔴 Gallagher Risk & Reward</option>
+            <option value="Get Medical Plans Ltd">🔵 Get Medical Plans Ltd</option>
+            <option value="Globacare">🔴 Globacare</option>
+            <option value="Healthcheque">🔵 Healthcheque</option>
+            <option value="Healthnet Services">🔴 Healthnet Services</option>
+            <option value="Healthy Horizon">🔵 Healthy Horizon</option>
+            <option value="Heath Crawford">🔴 Heath Crawford</option>
+            <option value="Heritage Health Ltd - Consumer only">🔵 Heritage Health Ltd - Consumer only</option>
+            <option value="Howden ex Punter Southall">🔴 Howden ex Punter Southall</option>
+            <option value="Howden Life & Health">🔴 Howden Life & Health</option>
+            <option value="IHC Ltd">🔵 IHC Ltd</option>
+            <option value="IHCS">🔴 IHCS</option>
+            <option value="Insured Health">🔴 Insured Health</option>
+            <option value="Intelligent PMI">🔴 Intelligent PMI</option>
+            <option value="J Osborne">🔴 J Osborne</option>
+            <option value="Julia Maxwell Limited">🔵 Julia Maxwell Limited</option>
+            <option value="LD Health Solutions">🔵 LD Health Solutions</option>
+            <option value="Lifepoint Healthcare">🔴 Lifepoint Healthcare</option>
+            <option value="H&L Healthcare">🔴 H&L Healthcare</option>
+            <option value="M&N Insurance">🔴 M&N Insurance</option>
+            <option value="Medischeme Health Ltd">🔵 Medischeme Health Ltd</option>
+            <option value="Mercer">🔴 Mercer</option>
+            <option value="Morehealth">🔴 Morehealth</option>
+            <option value="Movo">🔴 Movo</option>
+            <option value="My Health Protected Ltd (SME)">🔵 My Health Protected Ltd (SME)</option>
+            <option value="Nugent Sante">🔴 Nugent Sante</option>
+            <option value="Paragon Health">🔴 Paragon Health</option>
+            <option value="Premier Choice">🔴 Premier Choice</option>
+            <option value="Premier Insurance Services Ltd">🔵 Premier Insurance Services Ltd</option>
+            <option value="Private Healthcare Company">🔴 Private Healthcare Company</option>
+            <option value="Quilter Mortgage Planning Limited">🔵 Quilter Mortgage Planning Limited</option>
+            <option value="Quilter Wealth Limited">🔵 Quilter Wealth Limited</option>
+            <option value="Regency Health">🔴 Regency Health</option>
+            <option value="Remulate Proted Ltd">🔵 Remulate Proted Ltd</option>
+            <option value="Right to Health">🔴 Right to Health</option>
+            <option value="Sante Partners">🔵 Sante Partners</option>
+            <option value="Sutton Winson Ltd">🔵 Sutton Winson Ltd</option>
+            <option value="Switch Health">🔴 Switch Health</option>
+            <option value="THIG">🔴 THIG</option>
+            <option value="THIS">🔴 THIS</option>
+            <option value="The Right Mortgage Ltd">🔵 The Right Mortgage Ltd</option>
+            <option value="Trevor Downing Financial Management (IFA) Ltd">🔵 Trevor Downing Financial Management (IFA) Ltd</option>
+            <option value="USAY">🔴 USAY</option>
+            <option value="Vintage Health Limited">🔵 Vintage Health Limited</option>
+            <option value="Vizion Insurance Brokers Ltd">🔵 Vizion Insurance Brokers Ltd</option>
+            <option value="Willis Towers Watson (WTW)">🔵 Willis Towers Watson (WTW)</option>
+        </select>
+            <input type="text" id="intermediary-advisor" name="intermediary-advisor" placeholder="Intermediary Advisor" class="input-field" style="font-size: 0.8em;">
+            <input type="text" id="registration-number" name="registration-number" placeholder="Registration Number" class="input-field" style="font-size: 0.8em;">
+            <input type="date" id="renewal-date" name="renewal-date" placeholder="Renewal Date" class="input-field" style="font-size: 0.8em;">
+            <input type="number" id="annual-subs" name="annual-subs" placeholder="Total Annual Subs incl IPT" class="input-field" style="font-size: 0.8em;">
+            <select id="color-segment" name="color-segment" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Colour Segment</option>
+                <option value="Red">🔴 Red</option>
+                <option value="Green">🟢 Green</option>
+                <option value="Amber">🟠 Amber</option>
+                <option value="New">🟡 New</option>
+                <option value="Grey">⚪ Grey</option>
+                <option value="Blue">🔵 Blue</option>
+                <option value="Purple">🟣 Purple</option>
+                <option value="Missing">⚫ Missing</option>
+            </select>
+            <select id="claims-paid" name="claims-paid" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Claims Paid in the Last Year</option>
+                <option value="Less Than £500">Less Than £500</option>
+                <option value="Between £500 and £1000">Between £500 and £1000</option>
+                <option value="More Than £1000">More Than £1000</option>
+            </select>
+            <select id="payment-frequency" name="payment-frequency" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Payment Frequency</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Annually">Annually</option>
+            </select>
+            <select id="months-arrears" name="months-arrears" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Months in Arrears</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+            <select id="months-free-last" name="months-free-last" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Months Free Last Year</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+            <select id="months-free-this" name="months-free-this" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Months Free This Year</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: center; padding: 10px;">
+
+    <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; height: 200px;">
+        <h3 style="margin-top: 35px;">Offers</h3>
+        <p>Offer: <span id="annual-subs-display" style="font-weight: bold;"></span></p>
+        <p>Value: <span id="value" style="font-weight: bold;"></span></p>
+        <p>Total Payable: <span id="total_payable" style="font-weight: bold;"></span></p>
+    </div>
+
+    <div id="track-outcomes-box" style="background-image: url('{{ url_for('static', filename='bupa_track.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; background-color: white; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #0d1846; min-width: 30vw; height: 200px;">
+        <h3 style="margin-top: 35px;">Outcome</h3>
+        <form id="outcomes-form" style="display: grid; gap: 10px;">
+            <select id="offer" name="offer" class="input-field" style="font-size: 0.8em;" required>
+                <option value="" disabled selected hidden>Offer Proposed</option>
+                <option value="1 Month Free">1 Month Free</option>
+            </select>
+            <select id="offer-accepted" name="offer-accepted" class="input-field" style="font-size: 0.8em;" required>
+                <option value="" disabled selected hidden>Outcome</option>
+                <option value="Not Eligible for Offer">Not Eligible for Offer</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Maybe">Maybe</option>
+                <option value="Yes - With STM Override">Yes - With STM Override</option>
+                <option value="Maybe - With STM Override">Maybe - With STM Override</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: space-between; padding: 10px;">
+    <button id="submit-button" type="button" onclick="submitForm()" style="display: none; margin-left: auto;">Submit</button>
+    <button id="calculate-button" onclick="calculateOffer()" style="margin-left: auto;">Calculate</button>
+</div>
+
+<script>
+    const formInputs = document.querySelectorAll('.input-field');
+    const annualSubsDisplay = document.getElementById('annual-subs-display');
+    const greyBox = document.getElementById('grey-box');
+    const trackOutcomesBox = document.getElementById('track-outcomes-box');
+    const formContainer = document.getElementById('form-container');
+    const submitButton = document.getElementById('submit-button');
+    const calculateButton = document.getElementById('calculate-button');
+
+    function submitForm() {
+        const formDataUser = {};
+        const formDataOutcomes = {};
+        formInputs.forEach(input => {
+            if (input.form.id === 'user-form') {
+                formDataUser[input.name] = input.value.trim();
+            } else if (input.form.id === 'outcomes-form') {
+                formDataOutcomes[input.name] = input.value.trim();
+            }
+        });
+
+        const formData = {
+            user_data: formDataUser,
+            outcomes_data: formDataOutcomes,
+            url: window.location.href // Add the current URL to the formData
+        };
+
+        fetch('/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            location.reload();  // Refresh the page to clear the form
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function calculateOffer() {
+        const formData = {}; // Initialize formData object
+        formInputs.forEach(input => {
+            formData[input.name] = input.value.trim();
+        });
+        formData.url = window.location.href; // Get the current URL
+
+        // Hide the calculate button immediately
+        calculateButton.style.display = 'none';
+
+        fetch('/calculate_offer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.result !== undefined) {
+                annualSubsDisplay.textContent = data.result;
+                document.getElementById('total_payable').textContent = data.total_payable;
+                document.getElementById('value').textContent = data.value;
+
+                // Set the border color based on offer_bin
+                if (data.eligible === 1) {
+                    greyBox.style.borderColor = 'green';
+                } else {
+                    greyBox.style.borderColor = 'red';
+                }
+
+                // Show the grey boxes and hide the form container
+                greyBox.style.display = 'flex';
+                trackOutcomesBox.style.display = 'flex';
+                formContainer.style.display = 'none';
+
+                // Show the Submit button
+                submitButton.style.display = 'inline-block';
+            } else {
+                annualSubsDisplay.textContent = 'Error: ' + data.error;
+                calculateButton.style.display = 'inline-block'; // Show the calculate button again if there is an error
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            calculateButton.style.display = 'inline-block'; // Show the calculate button again if there is an error
+        });
+    }
+
+    function validateForm() {
+        const registrationNumber = document.getElementById('registration-number').value;
+        if (registrationNumber === "") {
+            alert("Please make sure Registration Number is valid.");
+            return;
+        }
+        submitForm();
+    }
+
+    function clearForm() {
+        location.reload();  // Refresh the page to clear the form
+    }
+
+    window.onload = function() {
+        const userFormHeight = formContainer.offsetHeight;
+        greyBox.style.height = `${userFormHeight}px`;
+        trackOutcomesBox.style.height = `${userFormHeight}px`;
+    };
+
+</script>
+
+<style>
+    /* Import Montserrat font from Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    /* Apply Montserrat font to input fields and select dropdowns */
+    .input-field {
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        height: 40px;
+        font-size: 0.8em;
+        color: #777;
+        font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
+        border: none; /* Remove the border */
+        border-bottom: 1px solid #777; /* Add bottom border */
+    }
+
+    select.input-field {
+        width: 100%;
+        height: 40px;
+        font-size: 0.8em;
+        color: #777;
+        font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
+        border: none; /* Remove the border */
+        border-bottom: 1px solid #777; /* Add bottom border */
+    }
+
+    .input-field:not(:last-child) {
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px 20px;
+        background-color: #0d1846;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.8em;
+        font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
+    }
+</style>
+
+{% endblock %}
