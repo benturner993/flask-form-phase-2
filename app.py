@@ -1,26 +1,25 @@
-from flask import Flask, render_template, request, jsonify
-# from flask_azure_oauth import FlaskAzureOAuth
+import pandas as pd
 import os
+
+# TO DO: add save outcomes for the searches
+# formatting
+
+from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 from calculator import (calculate_months, calculate_value,
                         eligibility, format_currency)
 from utils import save_to_csv
 
-# to do:
-# add required inputs and tests on inputs
-
 # static variables
-schema = 'consumer_retention'
-db_schema_searches = f'{schema}-searches.csv'
-db_schema_outcomes = f'{schema}-outcomes.csv'
+db = 'consumer_retention'
+db_schema_customers = f'{db}-customers.csv'
+db_schema_searches = f'{db}-searches.csv'
+db_schema_outcomes = f'{db}-outcomes.csv'
+
+# Load the customers CSV file into a DataFrame
+customers_df = pd.read_csv(f'data/{db_schema_customers}')
 
 app = Flask(__name__)
-
-
-# params for azure deployment
-# app.config['AZURE_OAUTH_CLIENT_ID'] = '<your-client-id>'
-# app.config['AZURE_OAUTH_CLIENT_SECRET'] = '<your-client-secret>'
-# app.config['AZURE_OAUTH_TENANT'] = '<your-tenant-id>'
 
 @app.route('/')
 def index():
@@ -38,16 +37,69 @@ def intermediary():
 def training():
     return render_template('training.html')
 
+# @app.route('/fetch_customer', methods=['GET'])
+# def fetch_customer():
+#     registration_number = request.args.get('registration_number')
+#     if registration_number:
+#         customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
+#         if not customer.empty:
+#             customer_data = customer.to_dict(orient='records')[0]
+#
+#             # Extract required fields and convert types as necessary
+#             extracted_data = {
+#                 'registration-number': str(customer_data.get('registration-number', '')),
+#                 'renewal-date': str(customer_data.get('renewal-date', '')),
+#                 'payment-frequency': str(customer_data.get('payment-frequency', '')),
+#                 'annual-subs': str(customer_data.get('annual-subs', '')),
+#                 'months-arrears': str(customer_data.get('months-arrears', '')),
+#                 'months-free-last': str(customer_data.get('months-free-last', '')),
+#                 'months-free-this': str(customer_data.get('months-free-this', '')),
+#                 'color-segment': str(customer_data.get('color-segment', '')),
+#                 'claims-paid': str(customer_data.get('claims-paid', ''))
+#             }
+#             return jsonify({'success': True, 'customer': extracted_data})
+#     return jsonify({'success': False, 'message': 'Customer not found'})
+
 @app.route('/calculate_offer', methods=['POST'])
 def calculate_offer():
     try:
         data = request.json
-        user_info = extract_user_info(data)
+        print(1)
+        registration_number = str(data['registration-number'])
+        print(2)
+        if registration_number:
+            customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
+            print(3)
+            if not customer.empty:
+                customer_data = customer.to_dict(orient='records')[0]
+                print(customer_data)
+
+                # Extract required fields and convert types as necessary
+                user_info = {
+                    'registration': float(customer_data['registration-number']),
+                    'renewal': datetime.strptime(customer_data['renewal-date'], '%Y-%m-%d'),
+                    'payment_frequency': customer_data['payment-frequency'],
+                    'total_annual_subs': float(customer_data['annual-subs']),
+                    'arrears': float(customer_data['months-arrears']),
+                    'financial_distress': 0,
+                    'mf_last_year': str(customer_data['months-free-last']),
+                    'mf_this_year': float(customer_data['months-free-this']),
+                    'segment': str(customer_data['color-segment']),
+                    'claims_paid': str(customer_data['claims-paid'])
+                }
+                print(5)
+
+        # user_info = extract_user_info(data)
         months_free = calculate_months_free(user_info)
+        print(6)
         offer_bin, offer_str = eligibility(months_free)
+        print(7)
         total_payable, value, formatted_total_payable, formatted_value = calculate_financials(user_info, months_free)
-        csv_file_path = os.path.join('data', db_schema_searches)
-        save_outcomes(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable)
+        print(8)
+        # csv_file_path = os.path.join('data', db_schema_searches)
+        print(9)
+        # save_outcomes(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable)
+        print(10)
 
         return jsonify({
             'result': offer_str,
@@ -57,8 +109,8 @@ def calculate_offer():
             'user_data': data
         })
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 400
-
 
 def extract_user_info(data):
     """
