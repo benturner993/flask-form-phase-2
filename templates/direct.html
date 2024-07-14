@@ -7,9 +7,9 @@
 </div>
 
 <div style="display: flex; justify-content: center; padding: 20px;">
-    <div style="width: 70vw;" id="form-container">
-        <form id="user-form" style="margin-top: 10px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(2, 45%); gap: 5%; position: relative;">
-            <input type="text" id="registration-number" name="registration-number" placeholder="Registration Number" class="input-field" style="font-size: 0.8em;">
+    <div style="width: 50vw;" id="form-container">
+        <form id="user-form" style="margin-top: 10px; margin-bottom: 10px;">
+            <input type="text" id="registration-number" name="registration-number" placeholder="Search for a Registration Number" class="input-field" style="font-size: 0.8em;">
         </form>
     </div>
 </div>
@@ -111,8 +111,13 @@ function calculateOffer() {
         body: JSON.stringify(formData)
     })
     .then(response => {
-        if (response.status === 400) {
+        if (response.status === 404) {
             alert("Error: Customer not found.");
+            throw new Error('Bad Request');
+        }
+
+        if (response.status === 400) {
+            alert("Error: Unable to calculate offer.");
             throw new Error('Bad Request');
         }
 
@@ -143,12 +148,6 @@ function calculateOffer() {
         // Show the Submit button
         submitButton.style.display = 'inline-block';
     })
-<!--    .catch(error => {-->
-<!--        console.error('Error:', error);-->
-<!--        // Display error message in the UI-->
-<!--        annualSubsDisplay.textContent = 'Error: Customer details could not be found';-->
-<!--        calculateButton.style.display = 'inline-block'; // Show the calculate button again if there is an error-->
-<!--    });-->
 }
 
     function validateForm() {

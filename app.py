@@ -43,12 +43,20 @@ def training():
 def calculate_offer():
     try:
         data = request.json
-        print(1)
+
+        # write location for search db
+        csv_file_path = os.path.join('data', db_schema_searches)
+
         # fetch registration-number from user input
         registration_number = str(data['registration-number'])
-        print(2)
+
         # filter for relevant customer based on registration-number
         customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
+
+        if customer.empty:
+            row_data=[registration_number] + [''] * 18
+            save_to_csv(csv_file_path, row_data)
+            return jsonify({'error': 'customer details empty'}), 404
 
         # retrieve user_info
         customer_data = customer.to_dict(orient='records')[0]
@@ -64,21 +72,14 @@ def calculate_offer():
             'mf_last_year': str(customer_data['months-free-last']),
             'mf_this_year': float(customer_data['months-free-this']),
             'segment': str(customer_data['color-segment']),
-            'claims_paid': str(customer_data['claims-paid'])
+            'claims_paid': str(customer_data['claims-paid']),
+            'url': str(data['registration-number'])
         }
-        print(5)
 
-        # user_info = extract_user_info(data)
         months_free = calculate_months_free(user_info)
-        print(6)
         offer_bin, offer_str = eligibility(months_free)
-        print(7)
         total_payable, value, formatted_total_payable, formatted_value = calculate_financials(user_info, months_free)
-        print(8)
-        # csv_file_path = os.path.join('data', db_schema_searches)
-        print(9)
-        # save_outcomes(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable)
-        print(10)
+        save_successful_search(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable)
 
         return jsonify({
             'result': offer_str,
@@ -200,7 +201,7 @@ def calculate_financials(user_info, months_free):
     formatted_value = format_currency(value)
     return total_payable, value, formatted_total_payable, formatted_value
 
-def save_outcomes(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable):
+def save_successful_search(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable):
     """
     Save outcomes and user information to a CSV file.
 
