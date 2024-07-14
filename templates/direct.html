@@ -17,7 +17,17 @@
 <div style="display: flex; justify-content: center; padding: 10px;">
 
     <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; height: 200px;">
-        <h3 style="margin-top: 35px;">Offers</h3>
+        <h3 style="margin-top: 35px;">Know Your Customer</h3>
+        <p>Registration Number: <span id="registration_number_display" style="font-weight: bold;"></span></p>
+        <p>Renewal Date: <span id="renewal_display" style="font-weight: bold;"></span></p>
+        <p>Payment Frequency: <span id="payment_frequency_display" style="font-weight: bold;"></span></p>
+        <p>Total Annual Subs: <span id="total_annual_subs_display" style="font-weight: bold;"></span></p>
+        <p>Months In Arrears: <span id="arrears_display" style="font-weight: bold;"></span></p>
+        <p>Financial Distress: <span id="financial_distress_display" style="font-weight: bold;"></span></p>
+        <p>Months Free Last Year: <span id="mf_last_year_display" style="font-weight: bold;"></span></p>
+        <p>Months Free This Year: <span id="mf_this_year_display" style="font-weight: bold;"></span></p>
+        <p>Colour Segment: <span id="segment_display" style="font-weight: bold;"></span></p>
+        <p>Claims Paid: <span id="claims_paid_display" style="font-weight: bold;"></span></p>
         <p>Offer: <span id="annual-subs-display" style="font-weight: bold;"></span></p>
         <p>Value: <span id="value" style="font-weight: bold;"></span></p>
         <p>Total Payable: <span id="total_payable" style="font-weight: bold;"></span></p>
@@ -85,7 +95,7 @@
         .then(data => {
             if (data.message) {
                 alert(data.message);
-                location.reload();  // Refresh the page to clear the form
+                location.reload();
             } else if (data.error) {
                 alert('Error: ' + data.error);
             }
@@ -113,12 +123,12 @@ function calculateOffer() {
     .then(response => {
         if (response.status === 404) {
             alert("Error: Customer not found.");
-            throw new Error('Bad Request');
+            location.reload();
         }
 
         if (response.status === 400) {
             alert("Error: Unable to calculate offer.");
-            throw new Error('Bad Request');
+            location.reload();
         }
 
         if (!response.ok) {
@@ -134,6 +144,16 @@ function calculateOffer() {
 
         // Update UI with successful data
         annualSubsDisplay.textContent = data.result;
+        document.getElementById('registration_number_display').textContent = data.registration_number_display;
+        document.getElementById('renewal_display').textContent = data.renewal_display;
+        document.getElementById('payment_frequency_display').textContent = data.payment_frequency_display;
+        document.getElementById('total_annual_subs_display').textContent = data.total_annual_subs_display;
+        document.getElementById('arrears_display').textContent = data.arrears_display;
+        document.getElementById('financial_distress_display').textContent = data.financial_distress_display;
+        document.getElementById('mf_last_year_display').textContent = data.mf_last_year_display;
+        document.getElementById('mf_this_year_display').textContent = data.mf_this_year_display;
+        document.getElementById('segment_display').textContent = data.segment_display;
+        document.getElementById('claims_paid_display').textContent = data.claims_paid_display;
         document.getElementById('total_payable').textContent = data.total_payable;
         document.getElementById('value').textContent = data.value;
 

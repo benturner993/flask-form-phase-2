@@ -86,6 +86,16 @@ def calculate_offer():
             'eligible': offer_bin,
             'value': formatted_value,
             'total_payable': formatted_total_payable,
+            'registration_number_display': user_info['registration'],
+            'renewal_display': user_info['renewal'],
+            'payment_frequency_display': user_info['payment_frequency'],
+            'total_annual_subs_display': user_info['total_annual_subs'],
+            'arrears_display': user_info['arrears'],
+            'financial_distress_display': user_info['financial_distress'],
+            'mf_last_year_display': user_info['mf_last_year'],
+            'mf_this_year_display': user_info['mf_this_year'],
+            'segment_display': user_info['segment'],
+            'claims_paid_display': user_info['claims_paid'],
             'user_data': data
                 })
     except Exception as e:
