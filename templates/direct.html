@@ -56,7 +56,6 @@
 <div style="display: flex; justify-content: center; padding: 20px; display: none;" id="additional-form-container">
     <div style="width: 70vw;">
         <form id="additional-user-form" style="margin-top: 10px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(2, 45%); gap: 5%; position: relative;">
-<!--            <input type="text" id="registration-number" name="registration-number" placeholder="Registration Number" class="input-field" style="font-size: 0.8em;">-->
             <input type="date" id="renewal-date" name="renewal-date" placeholder="Renewal Date" class="input-field" style="font-size: 0.8em;">
             <input type="number" id="annual-subs" name="annual-subs" placeholder="Total Annual Subs incl IPT" class="input-field" style="font-size: 0.8em;">
             <select id="color-segment" name="color-segment" class="input-field" style="font-size: 0.8em;">
@@ -107,7 +106,7 @@
 <div style="display: flex; justify-content: space-between; padding: 10px;">
     <button id="submit-button" type="button" onclick="submitForm()" style="display: none; margin-left: auto;">Submit</button>
     <button id="calculate-button2" type="button" onclick="showTrackOutcomesBox()" style="display: none; margin-left: auto;">Calculate</button>
-    <button id="calculate-button" onclick="calculateOffer()" style="margin-left: auto;">Find</button>
+    <button id="calculate-button" type="button" onclick="calculateOffer()" style="margin-left: auto;">Find</button>
 </div>
 
 <script>
@@ -223,7 +222,7 @@
             additionalFormContainer.style.display = 'inline-block';
 
             // Pre-populate additional form with KYC data
-            document.getElementById('renewal-date').value = data.renewal_display;
+            document.getElementById('renewal-date').value = formatDate(data.renewal_display);
             document.getElementById('annual-subs').value = data.total_annual_subs_display;
             document.getElementById('color-segment').value = data.segment_display;
             document.getElementById('claims-paid').value = data.claims_paid_display;
@@ -232,6 +231,14 @@
             document.getElementById('months-free-last').value = data.mf_last_year_display;
             document.getElementById('months-free-this').value = data.mf_this_year_display;
         })
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`; // Format as yyyy-mm-dd for the input type="date"
     }
 
     function showTrackOutcomesBox() {
