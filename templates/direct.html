@@ -222,6 +222,15 @@
             calculateButton2.style.display = 'inline-block';
             additionalFormContainer.style.display = 'inline-block';
 
+            // Pre-populate additional form with KYC data
+            document.getElementById('renewal-date').value = data.renewal_display;
+            document.getElementById('annual-subs').value = data.total_annual_subs_display;
+            document.getElementById('color-segment').value = data.segment_display;
+            document.getElementById('claims-paid').value = data.claims_paid_display;
+            document.getElementById('payment-frequency').value = data.payment_frequency_display;
+            document.getElementById('months-arrears').value = data.arrears_display;
+            document.getElementById('months-free-last').value = data.mf_last_year_display;
+            document.getElementById('months-free-this').value = data.mf_this_year_display;
         })
     }
 
