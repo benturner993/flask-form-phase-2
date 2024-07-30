@@ -53,6 +53,57 @@
     </div>
 </div>
 
+<div style="display: flex; justify-content: center; padding: 20px; display: none;" id="additional-form-container">
+    <div style="width: 70vw;">
+        <form id="additional-user-form" style="margin-top: 10px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(2, 45%); gap: 5%; position: relative;">
+<!--            <input type="text" id="registration-number" name="registration-number" placeholder="Registration Number" class="input-field" style="font-size: 0.8em;">-->
+            <input type="date" id="renewal-date" name="renewal-date" placeholder="Renewal Date" class="input-field" style="font-size: 0.8em;">
+            <input type="number" id="annual-subs" name="annual-subs" placeholder="Total Annual Subs incl IPT" class="input-field" style="font-size: 0.8em;">
+            <select id="color-segment" name="color-segment" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Colour Segment</option>
+                <option value="Red">🔴 Red</option>
+                <option value="Green">🟢 Green</option>
+                <option value="Amber">🟠 Amber</option>
+                <option value="New">🟡 New</option>
+                <option value="Grey">⚪ Grey</option>
+                <option value="Blue">🔵 Blue</option>
+                <option value="Purple">🟣 Purple</option>
+                <option value="Missing">⚫ Missing</option>
+            </select>
+            <select id="claims-paid" name="claims-paid" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Claims Paid in the Last Year</option>
+                <option value="Less Than £500">Less Than £500</option>
+                <option value="Between £500 and £1000">Between £500 and £1000</option>
+                <option value="More Than £1000">More Than £1000</option>
+            </select>
+            <select id="payment-frequency" name="payment-frequency" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Payment Frequency</option>
+                <option value="Monthly">Monthly</option>
+                <option value="Annually">Annually</option>
+            </select>
+            <select id="months-arrears" name="months-arrears" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Months in Arrears</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+            <select id="months-free-last" name="months-free-last" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Months Free Last Year</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+            <select id="months-free-this" name="months-free-this" class="input-field" style="font-size: 0.8em;">
+                <option value="" disabled selected hidden>Months Free This Year</option>
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </form>
+    </div>
+</div>
+
 <div style="display: flex; justify-content: space-between; padding: 10px;">
     <button id="submit-button" type="button" onclick="submitForm()" style="display: none; margin-left: auto;">Submit</button>
     <button id="calculate-button" onclick="calculateOffer()" style="margin-left: auto;">Calculate</button>
@@ -66,12 +117,13 @@
     const formContainer = document.getElementById('form-container');
     const submitButton = document.getElementById('submit-button');
     const calculateButton = document.getElementById('calculate-button');
+    const additionalFormContainer = document.getElementById('additional-form-container');
 
     function submitForm() {
         const formDataUser = {};
         const formDataOutcomes = {};
         formInputs.forEach(input => {
-            if (input.form.id === 'user-form') {
+            if (input.form.id === 'user-form' || input.form.id === 'additional-user-form') {
                 formDataUser[input.name] = input.value.trim();
             } else if (input.form.id === 'outcomes-form') {
                 formDataOutcomes[input.name] = input.value.trim();
@@ -103,72 +155,73 @@
         .catch(error => console.error('Error:', error));
     }
 
-function calculateOffer() {
-    const formData = {}; // Initialize formData object
-    formInputs.forEach(input => {
-        formData[input.name] = input.value.trim();
-    });
-    formData.url = window.location.href; // Get the current URL
+    function calculateOffer() {
+        const formData = {}; // Initialize formData object
+        formInputs.forEach(input => {
+            formData[input.name] = input.value.trim();
+        });
+        formData.url = window.location.href; // Get the current URL
 
-    // Hide the calculate button immediately
-    calculateButton.style.display = 'none';
+        // Hide the calculate button immediately
+        calculateButton.style.display = 'none';
 
-    fetch('/calculate_offer', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-    })
-    .then(response => {
-        if (response.status === 404) {
-            alert("Error: Customer not found.");
-            location.reload();
-        }
+        fetch('/calculate_offer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.status === 404) {
+                alert("Error: Customer not found.");
+                location.reload();
+            }
 
-        if (response.status === 400) {
-            alert("Error: Unable to calculate offer.");
-            location.reload();
-        }
+            if (response.status === 400) {
+                alert("Error: Unable to calculate offer.");
+                location.reload();
+            }
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Check if there's an error message in the response
-        if (data.error) {
-            throw new Error(data.error); // Throw an error with the specific message
-        }
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if there's an error message in the response
+            if (data.error) {
+                throw new Error(data.error); // Throw an error with the specific message
+            }
 
-        // Update UI with successful data
-        annualSubsDisplay.textContent = data.result;
-        document.getElementById('registration_number_display').textContent = data.registration_number_display;
-        document.getElementById('renewal_display').textContent = data.renewal_display;
-        document.getElementById('payment_frequency_display').textContent = data.payment_frequency_display;
-        document.getElementById('total_annual_subs_display').textContent = data.total_annual_subs_display;
-        document.getElementById('arrears_display').textContent = data.arrears_display;
-        document.getElementById('financial_distress_display').textContent = data.financial_distress_display;
-        document.getElementById('mf_last_year_display').textContent = data.mf_last_year_display;
-        document.getElementById('mf_this_year_display').textContent = data.mf_this_year_display;
-        document.getElementById('segment_display').textContent = data.segment_display;
-        document.getElementById('claims_paid_display').textContent = data.claims_paid_display;
-        document.getElementById('total_payable').textContent = data.total_payable;
-        document.getElementById('value').textContent = data.value;
+            // Update UI with successful data
+            annualSubsDisplay.textContent = data.result;
+            document.getElementById('registration_number_display').textContent = data.registration_number_display;
+            document.getElementById('renewal_display').textContent = data.renewal_display;
+            document.getElementById('payment_frequency_display').textContent = data.payment_frequency_display;
+            document.getElementById('total_annual_subs_display').textContent = data.total_annual_subs_display;
+            document.getElementById('arrears_display').textContent = data.arrears_display;
+            document.getElementById('financial_distress_display').textContent = data.financial_distress_display;
+            document.getElementById('mf_last_year_display').textContent = data.mf_last_year_display;
+            document.getElementById('mf_this_year_display').textContent = data.mf_this_year_display;
+            document.getElementById('segment_display').textContent = data.segment_display;
+            document.getElementById('claims_paid_display').textContent = data.claims_paid_display;
+            document.getElementById('total_payable').textContent = data.total_payable;
+            document.getElementById('value').textContent = data.value;
 
-        // Set the border color based on eligibility
-        greyBox.style.borderColor = data.eligible === 1 ? 'green' : 'red';
+            // Set the border color based on eligibility
+            greyBox.style.borderColor = data.eligible === 1 ? 'green' : 'red';
 
-        // Show the grey boxes and hide the form container
-        greyBox.style.display = 'flex';
-        trackOutcomesBox.style.display = 'flex';
-        formContainer.style.display = 'none';
+            // Show the grey boxes and hide the form container
+            greyBox.style.display = 'flex';
+            trackOutcomesBox.style.display = 'flex';
+            formContainer.style.display = 'none';
 
-        // Show the Submit button
-        submitButton.style.display = 'inline-block';
-    })
-}
+            // Show the Submit button and the additional form container
+            submitButton.style.display = 'inline-block';
+            additionalFormContainer.style.display = 'flex';
+        })
+    }
 
     function validateForm() {
         const registrationNumber = document.getElementById('registration-number').value;
@@ -204,16 +257,6 @@ function calculateOffer() {
         font-size: 0.8em;
         color: #777;
         font-family: 'Montserrat', sans-serif; /* Apply Montserrat font */
-        border: none; /* Remove the border */
-        border-bottom: 1px solid #777; /* Add bottom border */
-    }
-
-    select.input-field {
-        width: 100%;
-        height: 40px;
-        font-size: 0.8em;
-        color: #777;
-        font-family: 'Montserrat', sans-serif; /* Apply Montserrat
         border: none; /* Remove the border */
         border-bottom: 1px solid #777; /* Add bottom border */
     }
