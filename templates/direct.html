@@ -106,7 +106,8 @@
 
 <div style="display: flex; justify-content: space-between; padding: 10px;">
     <button id="submit-button" type="button" onclick="submitForm()" style="display: none; margin-left: auto;">Submit</button>
-    <button id="calculate-button" onclick="calculateOffer()" style="margin-left: auto;">Calculate</button>
+    <button id="calculate-button2" type="button" onclick="showTrackOutcomesBox()" style="display: none; margin-left: auto;">Calculate</button>
+    <button id="calculate-button" onclick="calculateOffer()" style="margin-left: auto;">Find</button>
 </div>
 
 <script>
@@ -117,6 +118,7 @@
     const formContainer = document.getElementById('form-container');
     const submitButton = document.getElementById('submit-button');
     const calculateButton = document.getElementById('calculate-button');
+    const calculateButton2 = document.getElementById('calculate-button2');
     const additionalFormContainer = document.getElementById('additional-form-container');
 
     function submitForm() {
@@ -212,15 +214,20 @@
             // Set the border color based on eligibility
             greyBox.style.borderColor = data.eligible === 1 ? 'green' : 'red';
 
-            // Show the grey boxes and hide the form container
+            // Show the grey box with KYC details and hide the form container
             greyBox.style.display = 'flex';
-            trackOutcomesBox.style.display = 'flex';
             formContainer.style.display = 'none';
 
-            // Show the Submit button and the additional form container
-            submitButton.style.display = 'inline-block';
-            additionalFormContainer.style.display = 'flex';
+            // Show the calculate-button2
+            calculateButton2.style.display = 'inline-block';
         })
+    }
+
+    function showTrackOutcomesBox() {
+        // Show the track-outcomes box and submit button, hide the calculate-button2
+        trackOutcomesBox.style.display = 'flex';
+        submitButton.style.display = 'inline-block';
+        calculateButton2.style.display = 'none';
     }
 
     function validateForm() {
