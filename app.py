@@ -1,15 +1,18 @@
 import pandas as pd
 import os
 
-# TO DO: add save outcomes for the searches
-# formatting
-# add edit functionaliry
-# add a back button
+# TO DO:
+# make sure save functionality works as expected
+# make sure saved changes is captured
+# make sure that all pages work with new methodology
 
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
-from calculator import (calculate_months, calculate_value,
+# from calculator import (calculate_months, calculate_value,
+#                         eligibility, format_currency)
+from calculator2 import (calculate_months, calculate_value,
                         eligibility, format_currency)
+
 from utils import save_to_csv
 
 # static variables
@@ -22,6 +25,51 @@ db_schema_outcomes = f'{db}-outcomes.csv'
 customers_df = pd.read_csv(f'data/{db_schema_customers}')
 
 app = Flask(__name__)
+
+def extract_user_info(data):
+    """
+    Extract user information from a given dictionary and return it in a standardized format.
+
+    Args:
+        data (dict): A dictionary containing user data with the following keys:
+            - 'registration-number' (str): Registration number as a string.
+            - 'renewal-date' (str): Renewal date in 'YYYY-MM-DD' format.
+            - 'payment-frequency' (str): Payment frequency.
+            - 'annual-subs' (str): Total annual subscriptions as a string.
+            - 'months-arrears' (str): Number of months in arrears as a string.
+            - 'months-free-last' (str): Number of months free last year.
+            - 'months-free-this' (str): Number of months free this year as a string.
+            - 'color-segment' (str): Color segment.
+            - 'claims-paid' (str): Claims paid.
+            - 'url' (str, optional): URL if available.
+
+    Returns:
+        dict: A dictionary with the following keys:
+            - 'registration' (float): Registration number as a float.
+            - 'renewal' (datetime): Renewal date as a datetime object.
+            - 'payment_frequency' (str): Payment frequency.
+            - 'total_annual_subs' (float): Total annual subscriptions as a float.
+            - 'arrears' (float): Number of months in arrears as a float.
+            - 'financial_distress' (int): Set to 0.
+            - 'mf_last_year' (str): Number of months free last year.
+            - 'mf_this_year' (float): Number of months free this year as a float.
+            - 'segment' (str): Color segment.
+            - 'claims_paid' (str): Claims paid.
+            - 'url' (str, optional): URL if available.
+    """
+    return {
+        'registration': float(data['registration-number']),
+        'renewal': datetime.strptime(data['renewal-date'], '%Y-%m-%d'),
+        'payment_frequency': data['payment-frequency'],
+        'total_annual_subs': float(data['annual-subs']),
+        'arrears': float(data['months-arrears']),
+        'financial_distress': 0,
+        'mf_last_year': str(data['months-free-last']),
+        'mf_this_year': float(data['months-free-this']),
+        'segment': str(data['color-segment']),
+        'claims_paid': str(data['claims-paid']),
+        'url': data.get('url')
+    }
 
 @app.route('/')
 def index():
@@ -39,8 +87,8 @@ def intermediary():
 def training():
     return render_template('training.html')
 
-@app.route('/calculate_offer', methods=['POST'])
-def calculate_offer():
+@app.route('/find_customer', methods=['POST'])
+def find_customer():
     try:
         data = request.json
 
@@ -101,6 +149,36 @@ def calculate_offer():
     except Exception as e:
         print(e)
         return jsonify({'error': str(e)}), 400
+
+@app.route('/calculate_offer', methods=['POST'])
+def calculate_offer():
+
+    data = request.json
+    user_info = extract_user_info(data)
+    months_free = calculate_months_free(user_info)
+    offer_bin, offer_str = eligibility(months_free)
+    total_payable, value, formatted_total_payable, formatted_value = calculate_financials(user_info, months_free)
+
+    print(data)
+
+    return jsonify({
+        'result': offer_str,
+        'eligible': offer_bin,
+        'value': formatted_value,
+        'total_payable': formatted_total_payable,
+        'registration_number_display': data['registration-number'],
+        'renewal_display': "user_info['renewal']",
+        'payment_frequency_display': "user_info['payment_frequency']",
+        'total_annual_subs_display': data['annual-subs'],
+        'arrears_display': "user_info['arrears']",
+        'financial_distress_display': "user_info['financial_distress']",
+        'mf_last_year_display': "user_info['mf_last_year']",
+        'mf_this_year_display': "user_info['mf_this_year']",
+        'segment_display': "user_info['segment']",
+        'claims_paid_display': "user_info['claims_paid']",
+        'user_data': "data"
+            })
+
 
 def extract_user_info(data):
     """

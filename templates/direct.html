@@ -17,17 +17,17 @@
 <div style="display: flex; justify-content: center; padding: 10px;">
 
     <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; min-height: 275px; overflow: auto;">
-        <h3 style="margin-top: 35px;">Know Your Customer</h3>
+        <h3 style="margin-top: 35px;">Reward and Retain</h3>
         <p>Registration Number: <span id="registration_number_display" style="font-weight: bold;"></span></p>
-        <p>Renewal Date: <span id="renewal_display" style="font-weight: bold;"></span></p>
-        <p>Payment Frequency: <span id="payment_frequency_display" style="font-weight: bold;"></span></p>
-        <p>Total Annual Subs: <span id="total_annual_subs_display" style="font-weight: bold;"></span></p>
-        <p>Months In Arrears: <span id="arrears_display" style="font-weight: bold;"></span></p>
-        <p>Financial Distress: <span id="financial_distress_display" style="font-weight: bold;"></span></p>
-        <p>Months Free Last Year: <span id="mf_last_year_display" style="font-weight: bold;"></span></p>
-        <p>Months Free This Year: <span id="mf_this_year_display" style="font-weight: bold;"></span></p>
-        <p>Colour Segment: <span id="segment_display" style="font-weight: bold;"></span></p>
-        <p>Claims Paid: <span id="claims_paid_display" style="font-weight: bold;"></span></p>
+<!--        <p>Renewal Date: <span id="renewal_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Payment Frequency: <span id="payment_frequency_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Total Annual Subs: <span id="total_annual_subs_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Months In Arrears: <span id="arrears_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Financial Distress: <span id="financial_distress_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Months Free Last Year: <span id="mf_last_year_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Months Free This Year: <span id="mf_this_year_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Colour Segment: <span id="segment_display" style="font-weight: bold;"></span></p>-->
+<!--        <p>Claims Paid: <span id="claims_paid_display" style="font-weight: bold;"></span></p>-->
         <p>Offer: <span id="annual-subs-display" style="font-weight: bold;"></span></p>
         <p>Value: <span id="value" style="font-weight: bold;"></span></p>
         <p>Total Payable: <span id="total_payable" style="font-weight: bold;"></span></p>
@@ -105,8 +105,8 @@
 
 <div style="display: flex; justify-content: space-between; padding: 10px;">
     <button id="submit-button" type="button" onclick="submitForm()" style="display: none; margin-left: auto;">Submit</button>
-    <button id="calculate-button2" type="button" onclick="showTrackOutcomesBox()" style="display: none; margin-left: auto;">Calculate</button>
-    <button id="calculate-button" type="button" onclick="calculateOffer()" style="margin-left: auto;">Find</button>
+    <button id="calculate-button" type="button" onclick="calculateDiscount()" style="display: none; margin-left: auto;">Calculate</button>
+    <button id="find-button" type="button" onclick="findCustomer()" style="margin-left: auto;">Find</button>
 </div>
 
 <script>
@@ -116,8 +116,8 @@
     const trackOutcomesBox = document.getElementById('track-outcomes-box');
     const formContainer = document.getElementById('form-container');
     const submitButton = document.getElementById('submit-button');
+    const findButton = document.getElementById('find-button');
     const calculateButton = document.getElementById('calculate-button');
-    const calculateButton2 = document.getElementById('calculate-button2');
     const additionalFormContainer = document.getElementById('additional-form-container');
 
     function submitForm() {
@@ -156,6 +156,113 @@
         .catch(error => console.error('Error:', error));
     }
 
+<!--    function calculateOfferv1() {-->
+<!--            const formData = {}; // Initialize formData object-->
+<!--            formInputs.forEach(input => {-->
+<!--                formData[input.name] = input.value.trim();-->
+<!--            });-->
+<!--            formData.url = window.location.href; // Get the current URL-->
+
+<!--            // Hide the calculate button immediately-->
+<!--            findButton.style.display = 'none';-->
+
+<!--            fetch('/calculate_offer', {-->
+<!--                method: 'POST',-->
+<!--                headers: {-->
+<!--                    'Content-Type': 'application/json'-->
+<!--                },-->
+<!--                body: JSON.stringify(formData)-->
+<!--            })-->
+<!--            .then(response => response.json())-->
+<!--            .then(data => {-->
+<!--                if (data.result !== undefined) {-->
+<!--                    annualSubsDisplay.textContent = data.result;-->
+<!--                    document.getElementById('total_payable').textContent = data.total_payable;-->
+<!--                    document.getElementById('value').textContent = data.value;-->
+
+<!--                    // Set the border color based on offer_bin-->
+<!--                    if (data.eligible === 1) {-->
+<!--                        greyBox.style.borderColor = 'green';-->
+<!--                    } else {-->
+<!--                        greyBox.style.borderColor = 'red';-->
+<!--                    }-->
+
+<!--                    // Show the grey boxes and hide the form container-->
+<!--                    greyBox.style.display = 'flex';-->
+<!--                    trackOutcomesBox.style.display = 'flex';-->
+<!--                    formContainer.style.display = 'none';-->
+
+<!--                    // Show the Submit button-->
+<!--                    submitButton.style.display = 'inline-block';-->
+<!--                } else {-->
+<!--                    annualSubsDisplay.textContent = 'Error: ' + data.error;-->
+<!--                    findButton.style.display = 'inline-block'; // Show the calculate button again if there is an error-->
+<!--                }-->
+<!--            })-->
+<!--            .catch(error => {-->
+<!--                console.error('Error:', error);-->
+<!--                findButton.style.display = 'inline-block'; // Show the calculate button again if there is an error-->
+<!--            });-->
+<!--        }-->
+
+    function findCustomer() {
+        const formData = {}; // Initialize formData object
+        formInputs.forEach(input => {
+            formData[input.name] = input.value.trim();
+        });
+        formData.url = window.location.href; // Get the current URL
+
+        // Hide the calculate button immediately
+        findButton.style.display = 'none';
+
+        fetch('/find_customer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.status === 404) {
+                alert("Error: Customer not found.");
+                location.reload();
+            }
+
+            if (response.status === 400) {
+                alert("Error: Unable to calculate offer.");
+                location.reload();
+            }
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if there's an error message in the response
+            if (data.error) {
+                throw new Error(data.error); // Throw an error with the specific message
+            }
+
+            // Hide the form container
+            formContainer.style.display = 'none';
+
+            // Show the calculate-button
+            calculateButton.style.display = 'inline-block';
+            additionalFormContainer.style.display = 'inline-block';
+
+            // Pre-populate additional form with KYC data
+            document.getElementById('renewal-date').value = formatDate(data.renewal_display);
+            document.getElementById('annual-subs').value = data.total_annual_subs_display;
+            document.getElementById('color-segment').value = data.segment_display;
+            document.getElementById('claims-paid').value = data.claims_paid_display;
+            document.getElementById('payment-frequency').value = data.payment_frequency_display;
+            document.getElementById('months-arrears').value = data.arrears_display;
+            document.getElementById('months-free-last').value = data.mf_last_year_display;
+            document.getElementById('months-free-this').value = data.mf_this_year_display;
+        })
+    }
+
     function calculateOffer() {
         const formData = {}; // Initialize formData object
         formInputs.forEach(input => {
@@ -164,7 +271,7 @@
         formData.url = window.location.href; // Get the current URL
 
         // Hide the calculate button immediately
-        calculateButton.style.display = 'none';
+        findButton.style.display = 'none';
 
         fetch('/calculate_offer', {
             method: 'POST',
@@ -217,8 +324,8 @@
             greyBox.style.display = 'flex';
             formContainer.style.display = 'none';
 
-            // Show the calculate-button2
-            calculateButton2.style.display = 'inline-block';
+            // Show the calculate-button
+            calculateButton.style.display = 'inline-block';
             additionalFormContainer.style.display = 'inline-block';
 
             // Pre-populate additional form with KYC data
@@ -241,12 +348,80 @@
         return `${year}-${month}-${day}`; // Format as yyyy-mm-dd for the input type="date"
     }
 
-    function showTrackOutcomesBox() {
-        // Show the track-outcomes box and submit button, hide the calculate-button2
+    function calculateDiscount() {
+        // Show the track-outcomes box and submit button, hide the calculate-button
         trackOutcomesBox.style.display = 'flex';
         submitButton.style.display = 'inline-block';
-        calculateButton2.style.display = 'none';
+        calculateButton.style.display = 'none';
         additionalFormContainer.style.display = 'none';
+
+        const formData = {}; // Initialize formData object
+        formInputs.forEach(input => {
+            formData[input.name] = input.value.trim();
+        });
+        formData.url = window.location.href; // Get the current URL
+
+        // Hide the find button immediately
+        findButton.style.display = 'none';
+
+        fetch('/calculate_offer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.status === 404) {
+                alert("Error: Customer not found.");
+                location.reload();
+            }
+
+            if (response.status === 400) {
+                alert("Error: Unable to calculate offer.");
+                location.reload();
+            }
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if there's an error message in the response
+            if (data.error) {
+                throw new Error(data.error); // Throw an error with the specific message
+            }
+
+            // Update UI with successful data
+            document.getElementById('registration_number_display').textContent = data.registration_number_display;
+<!--            document.getElementById('renewal_display').textContent = data.renewal_display;-->
+<!--            document.getElementById('payment_frequency_display').textContent = data.payment_frequency_display;-->
+<!--            document.getElementById('total_annual_subs_display').textContent = data.total_annual_subs_display;-->
+<!--            document.getElementById('arrears_display').textContent = data.arrears_display;-->
+<!--            document.getElementById('financial_distress_display').textContent = data.financial_distress_display;-->
+<!--            document.getElementById('mf_last_year_display').textContent = data.mf_last_year_display;-->
+<!--            document.getElementById('mf_this_year_display').textContent = data.mf_this_year_display;-->
+<!--            document.getElementById('segment_display').textContent = data.segment_display;-->
+<!--            document.getElementById('claims_paid_display').textContent = data.claims_paid_display;-->
+            document.getElementById('annual-subs-display').textContent = data.result;
+            document.getElementById('total_payable').textContent = data.total_payable;
+            document.getElementById('value').textContent = data.value;
+
+            // Set the border color based on eligibility
+            greyBox.style.borderColor = data.eligible === 1 ? 'green' : 'red';
+
+            // Show the grey box with KYC details and hide the form container
+            greyBox.style.display = 'flex';
+            formContainer.style.display = 'none';
+
+            // Show the track outcomes box
+            trackOutcomesBox.style.display = 'flex';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            findButton.style.display = 'inline-block'; // Show the find button again if there is an error
+        });
     }
 
     function validateForm() {
