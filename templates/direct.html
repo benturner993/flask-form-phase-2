@@ -120,6 +120,16 @@
     const calculateButton = document.getElementById('calculate-button');
     const additionalFormContainer = document.getElementById('additional-form-container');
 
+    let currentGUID = ''; // Global variable to store the GUID
+    let customerData = {}; // Global variable to store the customer data
+
+    function generateGUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
     function submitForm() {
         const formDataUser = {};
         const formDataOutcomes = {};
@@ -156,63 +166,20 @@
         .catch(error => console.error('Error:', error));
     }
 
-<!--    function calculateOfferv1() {-->
-<!--            const formData = {}; // Initialize formData object-->
-<!--            formInputs.forEach(input => {-->
-<!--                formData[input.name] = input.value.trim();-->
-<!--            });-->
-<!--            formData.url = window.location.href; // Get the current URL-->
-
-<!--            // Hide the calculate button immediately-->
-<!--            findButton.style.display = 'none';-->
-
-<!--            fetch('/calculate_offer', {-->
-<!--                method: 'POST',-->
-<!--                headers: {-->
-<!--                    'Content-Type': 'application/json'-->
-<!--                },-->
-<!--                body: JSON.stringify(formData)-->
-<!--            })-->
-<!--            .then(response => response.json())-->
-<!--            .then(data => {-->
-<!--                if (data.result !== undefined) {-->
-<!--                    annualSubsDisplay.textContent = data.result;-->
-<!--                    document.getElementById('total_payable').textContent = data.total_payable;-->
-<!--                    document.getElementById('value').textContent = data.value;-->
-
-<!--                    // Set the border color based on offer_bin-->
-<!--                    if (data.eligible === 1) {-->
-<!--                        greyBox.style.borderColor = 'green';-->
-<!--                    } else {-->
-<!--                        greyBox.style.borderColor = 'red';-->
-<!--                    }-->
-
-<!--                    // Show the grey boxes and hide the form container-->
-<!--                    greyBox.style.display = 'flex';-->
-<!--                    trackOutcomesBox.style.display = 'flex';-->
-<!--                    formContainer.style.display = 'none';-->
-
-<!--                    // Show the Submit button-->
-<!--                    submitButton.style.display = 'inline-block';-->
-<!--                } else {-->
-<!--                    annualSubsDisplay.textContent = 'Error: ' + data.error;-->
-<!--                    findButton.style.display = 'inline-block'; // Show the calculate button again if there is an error-->
-<!--                }-->
-<!--            })-->
-<!--            .catch(error => {-->
-<!--                console.error('Error:', error);-->
-<!--                findButton.style.display = 'inline-block'; // Show the calculate button again if there is an error-->
-<!--            });-->
-<!--        }-->
-
     function findCustomer() {
-        const formData = {}; // Initialize formData object
-        formInputs.forEach(input => {
-            formData[input.name] = input.value.trim();
+        const searchData = {}; // Initialize searchData object
+        searchData.guid = generateGUID();
+        currentGUID = searchData.guid; // Store the generated GUID in the global variable
+        const inputs = formContainer.querySelectorAll('.input-field'); // Select all inputs within formContainer
+        inputs.forEach(input => {
+            if (input.form.id === 'user-form') {
+                searchData[input.name] = input.value.trim();
+            }
         });
-        formData.url = window.location.href; // Get the current URL
+        searchData.url = window.location.href;
+        searchData.search_datetime = new Date().toISOString();
 
-        // Hide the calculate button immediately
+        // Hide the find button immediately
         findButton.style.display = 'none';
 
         fetch('/find_customer', {
@@ -220,7 +187,7 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(formData)
+            body: JSON.stringify(searchData)
         })
         .then(response => {
             if (response.status === 404) {
@@ -243,6 +210,9 @@
             if (data.error) {
                 throw new Error(data.error); // Throw an error with the specific message
             }
+
+            // Store the received customer data in the global variable
+            customerData = data;
 
             // Hide the form container
             formContainer.style.display = 'none';
@@ -261,83 +231,7 @@
             document.getElementById('months-free-last').value = data.mf_last_year_display;
             document.getElementById('months-free-this').value = data.mf_this_year_display;
         })
-    }
-
-    function calculateOffer() {
-        const formData = {}; // Initialize formData object
-        formInputs.forEach(input => {
-            formData[input.name] = input.value.trim();
-        });
-        formData.url = window.location.href; // Get the current URL
-
-        // Hide the calculate button immediately
-        findButton.style.display = 'none';
-
-        fetch('/calculate_offer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            if (response.status === 404) {
-                alert("Error: Customer not found.");
-                location.reload();
-            }
-
-            if (response.status === 400) {
-                alert("Error: Unable to calculate offer.");
-                location.reload();
-            }
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Check if there's an error message in the response
-            if (data.error) {
-                throw new Error(data.error); // Throw an error with the specific message
-            }
-
-            // Update UI with successful data
-            annualSubsDisplay.textContent = data.result;
-            document.getElementById('registration_number_display').textContent = data.registration_number_display;
-            document.getElementById('renewal_display').textContent = data.renewal_display;
-            document.getElementById('payment_frequency_display').textContent = data.payment_frequency_display;
-            document.getElementById('total_annual_subs_display').textContent = data.total_annual_subs_display;
-            document.getElementById('arrears_display').textContent = data.arrears_display;
-            document.getElementById('financial_distress_display').textContent = data.financial_distress_display;
-            document.getElementById('mf_last_year_display').textContent = data.mf_last_year_display;
-            document.getElementById('mf_this_year_display').textContent = data.mf_this_year_display;
-            document.getElementById('segment_display').textContent = data.segment_display;
-            document.getElementById('claims_paid_display').textContent = data.claims_paid_display;
-            document.getElementById('total_payable').textContent = data.total_payable;
-            document.getElementById('value').textContent = data.value;
-
-            // Set the border color based on eligibility
-            greyBox.style.borderColor = data.eligible === 1 ? 'green' : 'red';
-
-            // Show the grey box with KYC details and hide the form container
-            greyBox.style.display = 'flex';
-            formContainer.style.display = 'none';
-
-            // Show the calculate-button
-            calculateButton.style.display = 'inline-block';
-            additionalFormContainer.style.display = 'inline-block';
-
-            // Pre-populate additional form with KYC data
-            document.getElementById('renewal-date').value = formatDate(data.renewal_display);
-            document.getElementById('annual-subs').value = data.total_annual_subs_display;
-            document.getElementById('color-segment').value = data.segment_display;
-            document.getElementById('claims-paid').value = data.claims_paid_display;
-            document.getElementById('payment-frequency').value = data.payment_frequency_display;
-            document.getElementById('months-arrears').value = data.arrears_display;
-            document.getElementById('months-free-last').value = data.mf_last_year_display;
-            document.getElementById('months-free-this').value = data.mf_this_year_display;
-        })
+        .catch(error => console.error('Error:', error));
     }
 
     function formatDate(dateString) {
@@ -359,7 +253,14 @@
         formInputs.forEach(input => {
             formData[input.name] = input.value.trim();
         });
+
+        // Add stored customer data to formData
+        Object.assign(formData, customerData);
+
+        formData.guid = currentGUID; // Add the stored GUID to formData
         formData.url = window.location.href; // Get the current URL
+        formData.calculate_datetime = new Date().toISOString();
+
 
         // Hide the find button immediately
         findButton.style.display = 'none';
@@ -395,15 +296,6 @@
 
             // Update UI with successful data
             document.getElementById('registration_number_display').textContent = data.registration_number_display;
-<!--            document.getElementById('renewal_display').textContent = data.renewal_display;-->
-<!--            document.getElementById('payment_frequency_display').textContent = data.payment_frequency_display;-->
-<!--            document.getElementById('total_annual_subs_display').textContent = data.total_annual_subs_display;-->
-<!--            document.getElementById('arrears_display').textContent = data.arrears_display;-->
-<!--            document.getElementById('financial_distress_display').textContent = data.financial_distress_display;-->
-<!--            document.getElementById('mf_last_year_display').textContent = data.mf_last_year_display;-->
-<!--            document.getElementById('mf_this_year_display').textContent = data.mf_this_year_display;-->
-<!--            document.getElementById('segment_display').textContent = data.segment_display;-->
-<!--            document.getElementById('claims_paid_display').textContent = data.claims_paid_display;-->
             document.getElementById('annual-subs-display').textContent = data.result;
             document.getElementById('total_payable').textContent = data.total_payable;
             document.getElementById('value').textContent = data.value;
@@ -442,7 +334,6 @@
         greyBox.style.height = `${userFormHeight}px`;
         trackOutcomesBox.style.height = `${userFormHeight}px`;
     };
-
 </script>
 
 <style>

@@ -2,23 +2,23 @@ import pandas as pd
 import os
 
 # TO DO:
+# add in timestamps
 # make sure save functionality works as expected
-# make sure saved changes is captured
+# make sure saved changes is captured (pre and post) long table
+# make sure that variable names are consistent
 # make sure that all pages work with new methodology
 
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
-# from calculator import (calculate_months, calculate_value,
-#                         eligibility, format_currency)
-from calculator2 import (calculate_months, calculate_value,
+from calculator import (calculate_months, calculate_value,
                         eligibility, format_currency)
-
 from utils import save_to_csv
 
 # static variables
 db = 'consumer_retention'
 db_schema_customers = f'{db}-customers.csv'
 db_schema_searches = f'{db}-searches.csv'
+db_schema_form = f'{db}-form.csv'
 db_schema_outcomes = f'{db}-outcomes.csv'
 
 # Load the customers CSV file into a DataFrame
@@ -91,18 +91,19 @@ def training():
 def find_customer():
     try:
         data = request.json
+        guid = data.get('guid')
+        registration_number = data.get('registration-number')
+        url = data.get('url')
+        search_datetime = data.get('search_datetime')
 
         # write location for search db
         csv_file_path = os.path.join('data', db_schema_searches)
-
-        # fetch registration-number from user input
-        registration_number = str(data['registration-number'])
 
         # filter for relevant customer based on registration-number
         customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
 
         if customer.empty:
-            row_data=[registration_number] + [''] * 18
+            row_data = [guid, registration_number, url, pd.to_datetime(search_datetime), 'fail']
             save_to_csv(csv_file_path, row_data)
             return jsonify({'error': 'customer details empty'}), 404
 
@@ -124,16 +125,10 @@ def find_customer():
             'url': str(data['registration-number'])
         }
 
-        months_free = calculate_months_free(user_info)
-        offer_bin, offer_str = eligibility(months_free)
-        total_payable, value, formatted_total_payable, formatted_value = calculate_financials(user_info, months_free)
-        save_successful_search(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable)
+        row_data = [guid, registration_number, url, pd.to_datetime(search_datetime), 'success']
+        save_to_csv(csv_file_path, row_data)
 
         return jsonify({
-            'result': offer_str,
-            'eligible': offer_bin,
-            'value': formatted_value,
-            'total_payable': formatted_total_payable,
             'registration_number_display': user_info['registration'],
             'renewal_display': user_info['renewal'],
             'payment_frequency_display': user_info['payment_frequency'],
@@ -143,8 +138,7 @@ def find_customer():
             'mf_last_year_display': user_info['mf_last_year'],
             'mf_this_year_display': user_info['mf_this_year'],
             'segment_display': user_info['segment'],
-            'claims_paid_display': user_info['claims_paid'],
-            'user_data': data
+            'claims_paid_display': user_info['claims_paid']
                 })
     except Exception as e:
         print(e)
@@ -154,12 +148,17 @@ def find_customer():
 def calculate_offer():
 
     data = request.json
+    print(data)
     user_info = extract_user_info(data)
     months_free = calculate_months_free(user_info)
     offer_bin, offer_str = eligibility(months_free)
     total_payable, value, formatted_total_payable, formatted_value = calculate_financials(user_info, months_free)
 
-    print(data)
+    # write location for form db
+    csv_file_path = os.path.join('data', db_schema_form)
+
+    row_data = []
+    save_to_csv(csv_file_path, row_data)
 
     return jsonify({
         'result': offer_str,
@@ -176,7 +175,7 @@ def calculate_offer():
         'mf_this_year_display': "user_info['mf_this_year']",
         'segment_display': "user_info['segment']",
         'claims_paid_display': "user_info['claims_paid']",
-        'user_data': "data"
+        # 'user_data': "data"
             })
 
 
