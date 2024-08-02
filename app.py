@@ -129,16 +129,16 @@ def find_customer():
         save_to_csv(csv_file_path, row_data)
 
         return jsonify({
-            'registration_number_display': user_info['registration'],
-            'renewal_display': user_info['renewal'],
-            'payment_frequency_display': user_info['payment_frequency'],
-            'total_annual_subs_display': user_info['total_annual_subs'],
-            'arrears_display': user_info['arrears'],
-            'financial_distress_display': user_info['financial_distress'],
-            'mf_last_year_display': user_info['mf_last_year'],
-            'mf_this_year_display': user_info['mf_this_year'],
-            'segment_display': user_info['segment'],
-            'claims_paid_display': user_info['claims_paid']
+            'db_registration_number': user_info['registration'],
+            'db_renewal': user_info['renewal'],
+            'db_payment_frequency': user_info['payment_frequency'],
+            'db_total_annual_subs': user_info['total_annual_subs'],
+            'db_arrears': user_info['arrears'],
+            'db_financial_distress': user_info['financial_distress'],
+            'db_mf_last_year': user_info['mf_last_year'],
+            'db_mf_this_year': user_info['mf_this_year'],
+            'db_segment': user_info['segment'],
+            'db_claims_paid': user_info['claims_paid']
                 })
     except Exception as e:
         print(e)
@@ -165,16 +165,16 @@ def calculate_offer():
         'eligible': offer_bin,
         'value': formatted_value,
         'total_payable': formatted_total_payable,
-        'registration_number_display': data['registration-number'],
-        'renewal_display': "user_info['renewal']",
-        'payment_frequency_display': "user_info['payment_frequency']",
-        'total_annual_subs_display': data['annual-subs'],
-        'arrears_display': "user_info['arrears']",
-        'financial_distress_display': "user_info['financial_distress']",
-        'mf_last_year_display': "user_info['mf_last_year']",
-        'mf_this_year_display': "user_info['mf_this_year']",
-        'segment_display': "user_info['segment']",
-        'claims_paid_display': "user_info['claims_paid']",
+        'db_registration_number': data['registration-number'],
+        'db_renewal': "user_info['renewal']",
+        'db_payment_frequency': "user_info['payment_frequency']",
+        'db_total_annual_subs': data['annual-subs'],
+        'db_arrears': "user_info['arrears']",
+        'db_financial_distress': "user_info['financial_distress']",
+        'db_mf_last_year': "user_info['mf_last_year']",
+        'db_mf_this_year': "user_info['mf_this_year']",
+        'db_segment': "user_info['segment']",
+        'db_claims_paid': "user_info['claims_paid']",
         # 'user_data': "data"
             })
 

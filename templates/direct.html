@@ -18,7 +18,7 @@
 
     <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; min-height: 275px; overflow: auto;">
         <h3 style="margin-top: 35px;">Reward and Retain</h3>
-        <p>Registration Number: <span id="registration_number_display" style="font-weight: bold;"></span></p>
+        <p>Registration Number: <span id="db_registration_number" style="font-weight: bold;"></span></p>
 <!--        <p>Renewal Date: <span id="renewal_display" style="font-weight: bold;"></span></p>-->
 <!--        <p>Payment Frequency: <span id="payment_frequency_display" style="font-weight: bold;"></span></p>-->
 <!--        <p>Total Annual Subs: <span id="total_annual_subs_display" style="font-weight: bold;"></span></p>-->
@@ -222,14 +222,14 @@
             additionalFormContainer.style.display = 'inline-block';
 
             // Pre-populate additional form with KYC data
-            document.getElementById('renewal-date').value = formatDate(data.renewal_display);
-            document.getElementById('annual-subs').value = data.total_annual_subs_display;
-            document.getElementById('color-segment').value = data.segment_display;
-            document.getElementById('claims-paid').value = data.claims_paid_display;
-            document.getElementById('payment-frequency').value = data.payment_frequency_display;
-            document.getElementById('months-arrears').value = data.arrears_display;
-            document.getElementById('months-free-last').value = data.mf_last_year_display;
-            document.getElementById('months-free-this').value = data.mf_this_year_display;
+            document.getElementById('renewal-date').value = formatDate(data.db_renewal);
+            document.getElementById('annual-subs').value = data.db_total_annual_subs;
+            document.getElementById('color-segment').value = data.db_segment;
+            document.getElementById('claims-paid').value = data.db_claims_paid;
+            document.getElementById('payment-frequency').value = data.db_payment_frequency;
+            document.getElementById('months-arrears').value = data.db_arrears;
+            document.getElementById('months-free-last').value = data.db_mf_last_year;
+            document.getElementById('months-free-this').value = data.db_mf_this_year;
         })
         .catch(error => console.error('Error:', error));
     }
@@ -295,7 +295,7 @@
             }
 
             // Update UI with successful data
-            document.getElementById('registration_number_display').textContent = data.registration_number_display;
+            document.getElementById('db_registration_number').textContent = data.db_registration_number;
             document.getElementById('annual-subs-display').textContent = data.result;
             document.getElementById('total_payable').textContent = data.total_payable;
             document.getElementById('value').textContent = data.value;
