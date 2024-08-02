@@ -170,12 +170,19 @@
         const searchData = {}; // Initialize searchData object
         searchData.guid = generateGUID();
         currentGUID = searchData.guid; // Store the generated GUID in the global variable
-        const inputs = formContainer.querySelectorAll('.input-field'); // Select all inputs within formContainer
-        inputs.forEach(input => {
-            if (input.form.id === 'user-form') {
+
+        formInputs.forEach(input => {
+            if (input.form.id === 'user-form' || input.form.id === 'additional-user-form') {
                 searchData[input.name] = input.value.trim();
             }
         });
+
+<!--        const inputs = formContainer.querySelectorAll('.input-field'); // Select all inputs within formContainer-->
+<!--        inputs.forEach(input => {-->
+<!--            if (input.form.id === 'user-form') {-->
+<!--                searchData[input.name] = input.value.trim();-->
+<!--            }-->
+<!--        });-->
         searchData.url = window.location.href;
         searchData.search_datetime = new Date().toISOString();
 
@@ -250,16 +257,19 @@
         additionalFormContainer.style.display = 'none';
 
         const formData = {}; // Initialize formData object
-        formInputs.forEach(input => {
-            formData[input.name] = input.value.trim();
-        });
-
-        // Add stored customer data to formData
-        Object.assign(formData, customerData);
-
         formData.guid = currentGUID; // Add the stored GUID to formData
-        formData.url = window.location.href; // Get the current URL
         formData.calculate_datetime = new Date().toISOString();
+        formData['registration-number'] = document.getElementById('user-registration-number').value;
+        formData['user-renewal-date'] = document.getElementById('user-renewal-date').value;
+        formData['user-payment-frequency'] = document.getElementById('user-payment-frequency').value;
+        formData['user-annual-subs'] = document.getElementById('user-annual-subs').value;
+        formData['user-months-arrears'] = document.getElementById('user-months-arrears').value;
+        formData['user-months-free-last'] = document.getElementById('user-months-free-last').value;
+        formData['user-months-free-this'] = document.getElementById('user-months-free-this').value;
+        formData['user-color-segment'] = document.getElementById('user-color-segment').value;
+        formData['user-claims-paid'] = document.getElementById('user-claims-paid').value;
+        Object.assign(formData, customerData);
+        formData.url = window.location.href; // Get the current URL
 
         // Hide the find button immediately
         findButton.style.display = 'none';

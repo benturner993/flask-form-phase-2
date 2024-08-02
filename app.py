@@ -110,21 +110,7 @@ def find_customer():
         # retrieve user_info
         customer_data = customer.to_dict(orient='records')[0]
 
-        # convert types as necessary
-        # user_info = {
-        #     'registration': float(customer_data['registration-number']),
-        #     'renewal': datetime.strptime(customer_data['renewal-date'], '%Y-%m-%d'),
-        #     'payment_frequency': customer_data['payment-frequency'],
-        #     'total_annual_subs': float(customer_data['annual-subs']),
-        #     'arrears': float(customer_data['months-arrears']),
-        #     'financial_distress': 0,
-        #     'mf_last_year': str(customer_data['months-free-last']),
-        #     'mf_this_year': float(customer_data['months-free-this']),
-        #     'segment': str(customer_data['color-segment']),
-        #     'claims_paid': str(customer_data['claims-paid']),
-        #     'url': str(data['registration-number'])
-        # }
-
+        # write to csv
         row_data = [guid, registration_number, url, pd.to_datetime(search_datetime), 'success']
         save_to_csv(csv_file_path, row_data)
 
@@ -148,7 +134,6 @@ def find_customer():
 def calculate_offer():
 
     data = request.json
-    print('calculate offer', data)
     user_info = extract_user_info(data)
     months_free = calculate_months_free(user_info)
     offer_bin, offer_str = eligibility(months_free)
@@ -156,8 +141,19 @@ def calculate_offer():
 
     # write location for form db
     csv_file_path = os.path.join('data', db_schema_form)
+    row_data = [data['guid'], data['calculate_datetime'], data['registration-number'],
+                data['user-renewal-date'], data['user-payment-frequency'], data['user-annual-subs'],
+                data['user-months-arrears'], data['user-months-free-last'], data['user-months-free-this'],
+                data['user-color-segment'], data['user-claims-paid'], data['db_arrears'],
+                data['db_claims_paid'], data['db_financial_distress'], data['db_mf_last_year'],
+                data['db_mf_this_year'], data['db_payment_frequency'], data['db_registration_number'],
+                data['db_renewal'], data['db_segment'], data['db_total_annual_subs'], data['url']]
+    save_to_csv(csv_file_path, row_data)
 
-    row_data = []
+    # write location for outcomes db
+    csv_file_path = os.path.join('data', db_schema_outcomes)
+    row_data = [data['guid'], data['registration-number'], data['user-annual-subs'], months_free, offer_bin,
+                offer_str, total_payable, value, formatted_total_payable, formatted_value]
     save_to_csv(csv_file_path, row_data)
 
     return jsonify({
