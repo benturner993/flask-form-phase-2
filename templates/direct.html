@@ -9,7 +9,7 @@
 <div style="display: flex; justify-content: center; padding: 20px;">
     <div style="width: 50vw;" id="form-container">
         <form id="user-form" style="margin-top: 10px; margin-bottom: 10px;">
-            <input type="text" id="registration-number" name="registration-number" placeholder="Search for a Registration Number" class="input-field" style="font-size: 0.8em;">
+            <input type="text" id="user-registration-number" name="registration-number" placeholder="Search for a Registration Number" class="input-field" style="font-size: 0.8em;">
         </form>
     </div>
 </div>
@@ -28,7 +28,7 @@
 <!--        <p>Months Free This Year: <span id="mf_this_year_display" style="font-weight: bold;"></span></p>-->
 <!--        <p>Colour Segment: <span id="segment_display" style="font-weight: bold;"></span></p>-->
 <!--        <p>Claims Paid: <span id="claims_paid_display" style="font-weight: bold;"></span></p>-->
-        <p>Offer: <span id="annual-subs-display" style="font-weight: bold;"></span></p>
+        <p>Offer: <span id="new-annual-subs" style="font-weight: bold;"></span></p>
         <p>Value: <span id="value" style="font-weight: bold;"></span></p>
         <p>Total Payable: <span id="total_payable" style="font-weight: bold;"></span></p>
     </div>
@@ -56,9 +56,9 @@
 <div style="display: flex; justify-content: center; padding: 20px; display: none;" id="additional-form-container">
     <div style="width: 70vw;">
         <form id="additional-user-form" style="margin-top: 10px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(2, 45%); gap: 5%; position: relative;">
-            <input type="date" id="renewal-date" name="renewal-date" placeholder="Renewal Date" class="input-field" style="font-size: 0.8em;">
-            <input type="number" id="annual-subs" name="annual-subs" placeholder="Total Annual Subs incl IPT" class="input-field" style="font-size: 0.8em;">
-            <select id="color-segment" name="color-segment" class="input-field" style="font-size: 0.8em;">
+            <input type="date" id="user-renewal-date" name="user-renewal-date" placeholder="Renewal Date" class="input-field" style="font-size: 0.8em;">
+            <input type="number" id="user-annual-subs" name="user-annual-subs" placeholder="Total Annual Subs incl IPT" class="input-field" style="font-size: 0.8em;">
+            <select id="user-color-segment" name="user-color-segment" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Colour Segment</option>
                 <option value="Red">🔴 Red</option>
                 <option value="Green">🟢 Green</option>
@@ -69,30 +69,30 @@
                 <option value="Purple">🟣 Purple</option>
                 <option value="Missing">⚫ Missing</option>
             </select>
-            <select id="claims-paid" name="claims-paid" class="input-field" style="font-size: 0.8em;">
+            <select id="user-claims-paid" name="user-claims-paid" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Claims Paid in the Last Year</option>
                 <option value="Less Than £500">Less Than £500</option>
                 <option value="Between £500 and £1000">Between £500 and £1000</option>
                 <option value="More Than £1000">More Than £1000</option>
             </select>
-            <select id="payment-frequency" name="payment-frequency" class="input-field" style="font-size: 0.8em;">
+            <select id="user-payment-frequency" name="user-payment-frequency" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Payment Frequency</option>
                 <option value="Monthly">Monthly</option>
                 <option value="Annually">Annually</option>
             </select>
-            <select id="months-arrears" name="months-arrears" class="input-field" style="font-size: 0.8em;">
+            <select id="user-months-arrears" name="user-months-arrears" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Months in Arrears</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
             </select>
-            <select id="months-free-last" name="months-free-last" class="input-field" style="font-size: 0.8em;">
+            <select id="user-months-free-last" name="user-months-free-last" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Months Free Last Year</option>
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
             </select>
-            <select id="months-free-this" name="months-free-this" class="input-field" style="font-size: 0.8em;">
+            <select id="user-months-free-this" name="user-months-free-this" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Months Free This Year</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
@@ -111,7 +111,7 @@
 
 <script>
     const formInputs = document.querySelectorAll('.input-field');
-    const annualSubsDisplay = document.getElementById('annual-subs-display');
+    const annualSubsDisplay = document.getElementById('new-annual-subs');
     const greyBox = document.getElementById('grey-box');
     const trackOutcomesBox = document.getElementById('track-outcomes-box');
     const formContainer = document.getElementById('form-container');
@@ -222,14 +222,14 @@
             additionalFormContainer.style.display = 'inline-block';
 
             // Pre-populate additional form with KYC data
-            document.getElementById('renewal-date').value = formatDate(data.db_renewal);
-            document.getElementById('annual-subs').value = data.db_total_annual_subs;
-            document.getElementById('color-segment').value = data.db_segment;
-            document.getElementById('claims-paid').value = data.db_claims_paid;
-            document.getElementById('payment-frequency').value = data.db_payment_frequency;
-            document.getElementById('months-arrears').value = data.db_arrears;
-            document.getElementById('months-free-last').value = data.db_mf_last_year;
-            document.getElementById('months-free-this').value = data.db_mf_this_year;
+            document.getElementById('user-renewal-date').value = formatDate(data.db_renewal);
+            document.getElementById('user-annual-subs').value = data.db_total_annual_subs;
+            document.getElementById('user-color-segment').value = data.db_segment;
+            document.getElementById('user-claims-paid').value = data.db_claims_paid;
+            document.getElementById('user-payment-frequency').value = data.db_payment_frequency;
+            document.getElementById('user-months-arrears').value = data.db_arrears;
+            document.getElementById('user-months-free-last').value = data.db_mf_last_year;
+            document.getElementById('user-months-free-this').value = data.db_mf_this_year;
         })
         .catch(error => console.error('Error:', error));
     }
@@ -260,7 +260,6 @@
         formData.guid = currentGUID; // Add the stored GUID to formData
         formData.url = window.location.href; // Get the current URL
         formData.calculate_datetime = new Date().toISOString();
-
 
         // Hide the find button immediately
         findButton.style.display = 'none';
@@ -296,7 +295,7 @@
 
             // Update UI with successful data
             document.getElementById('db_registration_number').textContent = data.db_registration_number;
-            document.getElementById('annual-subs-display').textContent = data.result;
+            document.getElementById('new-annual-subs').textContent = data.result;
             document.getElementById('total_payable').textContent = data.total_payable;
             document.getElementById('value').textContent = data.value;
 
@@ -317,7 +316,7 @@
     }
 
     function validateForm() {
-        const registrationNumber = document.getElementById('registration-number').value;
+        const registrationNumber = document.getElementById('user-registration-number').value;
         if (registrationNumber === "") {
             alert("Please make sure Registration Number is valid.");
             return;
