@@ -141,6 +141,8 @@ def calculate_offer():
 
     # write location for form db
     csv_file_path = os.path.join('data', db_schema_form)
+
+    # create data outputs as a list
     row_data = [data['guid'], data['calculate_datetime'], data['registration-number'],
                 data['user-renewal-date'], data['user-payment-frequency'], data['user-annual-subs'],
                 data['user-months-arrears'], data['user-months-free-last'], data['user-months-free-this'],
@@ -148,12 +150,15 @@ def calculate_offer():
                 data['db_claims_paid'], data['db_financial_distress'], data['db_mf_last_year'],
                 data['db_mf_this_year'], data['db_payment_frequency'], data['db_registration_number'],
                 data['db_renewal'], data['db_segment'], data['db_total_annual_subs'], data['url']]
-    save_to_csv(csv_file_path, row_data)
 
-    # write location for outcomes db
-    csv_file_path = os.path.join('data', db_schema_outcomes)
-    row_data = [data['guid'], data['registration-number'], data['user-annual-subs'], months_free, offer_bin,
-                offer_str, total_payable, value, formatted_total_payable, formatted_value]
+    if 'intermediary' in data['url']:
+        intermediary = data['intermediary']
+        intermediary_advisor = data['intermediary-advisor']
+        row_data.extend([intermediary, intermediary_advisor])
+    else:
+        row_data.extend(['', ''])
+
+    # save to csv
     save_to_csv(csv_file_path, row_data)
 
     return jsonify({
@@ -214,76 +219,20 @@ def calculate_financials(user_info, months_free):
     formatted_value = format_currency(value)
     return total_payable, value, formatted_total_payable, formatted_value
 
-def save_successful_search(data, csv_file_path, user_info, months_free, offer_bin, offer_str, value, total_payable):
-    row_data = [
-        user_info['registration'],
-        user_info['renewal'],
-        user_info['payment_frequency'],
-        user_info['total_annual_subs'],
-        user_info['arrears'],
-        user_info['financial_distress'],
-        user_info['mf_last_year'],
-        user_info['mf_this_year'],
-        user_info['segment'],
-        user_info['claims_paid'],
-        user_info['url'],
-        months_free,
-        offer_bin,
-        offer_str,
-        value,
-        total_payable,
-        datetime.now()
-    ]
-
-    if 'intermediary' in user_info['url']:
-        intermediary = data['intermediary']
-        intermediary_advisor = data['intermediary-advisor']
-        row_data.extend([intermediary, intermediary_advisor])
-    else:
-        row_data.extend(['', ''])
-
-    save_to_csv(csv_file_path, row_data)
-
 @app.route('/submit', methods=['POST'])
 def submit_form():
     try:
         user_data = request.json.get('user_data', {})
         outcomes_data = request.json.get('outcomes_data', {})
-        url = request.json.get('url')
+        guid = request.json.get('guid')
         csv_file_path = os.path.join('data', db_schema_outcomes)
-        row_data = prepare_submission_data(user_data, outcomes_data, url)
+        row_data = [guid, user_data['registration-number'], user_data['user-annual-subs'],
+                    outcomes_data['offer'], outcomes_data['offer-accepted'], datetime.now()]
         save_to_csv(csv_file_path, row_data)
 
         return jsonify({'message': 'Successfully submitted.'})
     except Exception as e:
         return jsonify({'error': str(e)}), 400
-
-def prepare_submission_data(user_data, outcomes_data, url):
-    base_row_data = [
-        user_data.get('registration-number', ''),
-        user_data.get('renewal-date', ''),
-        user_data.get('annual-subs', ''),
-        user_data.get('color-segment', ''),
-        user_data.get('claims-paid', ''),
-        user_data.get('payment-frequency', ''),
-        user_data.get('months-arrears', ''),
-        user_data.get('months-free-last', ''),
-        user_data.get('months-free-this', ''),
-        datetime.now(),
-        url,
-        outcomes_data.get('offer', ''),
-        outcomes_data.get('offer-accepted', '')
-    ]
-
-    if 'intermediary' in url:
-        base_row_data.extend([
-            user_data.get('intermediary', ''),
-            user_data.get('intermediary-advisor', '')
-        ])
-    else:
-        base_row_data.extend(['', ''])
-
-    return base_row_data
 
 if __name__ == '__main__':
     app.run(debug=True)
