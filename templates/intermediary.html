@@ -7,9 +7,47 @@
 </div>
 
 <div style="display: flex; justify-content: center; padding: 20px;">
-    <div style="width: 70vw;" id="form-container">
-        <form id="user-form" style="margin-top: 10px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(2, 45%); gap: 5%; position: relative;">
-        <select id="intermediary" name="intermediary" class="input-field" style="font-size: 0.8em;">
+    <div style="width: 50vw;" id="form-container">
+        <form id="user-form" style="margin-top: 10px; margin-bottom: 10px;">
+            <input type="text" id="user-registration-number" name="registration-number" placeholder="Search for a Registration Number" class="input-field" style="font-size: 0.8em;">
+        </form>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: center; padding: 10px;">
+
+    <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; min-height: 275px; overflow: auto;">
+        <h3 style="margin-top: 35px;">Reward and Retain</h3>
+        <p>Registration Number: <span id="db_registration_number" style="font-weight: bold;"></span></p>
+        <p>Offer: <span id="new-annual-subs" style="font-weight: bold;"></span></p>
+        <p>Value: <span id="value" style="font-weight: bold;"></span></p>
+        <p>Total Payable: <span id="total_payable" style="font-weight: bold;"></span></p>
+    </div>
+
+    <div id="track-outcomes-box" style="background-image: url('{{ url_for('static', filename='bupa_track.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; background-color: white; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #0d1846; min-width: 30vw; min-height: 275px;">
+        <h3 style="margin-top: 35px;">Outcome</h3>
+        <form id="outcomes-form" style="display: grid; gap: 10px;">
+            <select id="offer" name="offer" class="input-field" style="font-size: 0.8em;" required>
+                <option value="" disabled selected hidden>Offer Proposed</option>
+                <option value="1 Month Free">1 Month Free</option>
+            </select>
+            <select id="offer-accepted" name="offer-accepted" class="input-field" style="font-size: 0.8em;" required>
+                <option value="" disabled selected hidden>Outcome</option>
+                <option value="Not Eligible for Offer">Not Eligible for Offer</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Maybe">Maybe</option>
+                <option value="Yes - With STM Override">Yes - With STM Override</option>
+                <option value="Maybe - With STM Override">Maybe - With STM Override</option>
+            </select>
+        </form>
+    </div>
+</div>
+
+<div style="display: flex; justify-content: center; padding: 20px; display: none;" id="additional-form-container">
+    <div style="width: 70vw;">
+        <form id="additional-user-form" style="margin-top: 10px; margin-bottom: 10px; display: grid; grid-template-columns: repeat(2, 45%); gap: 5%; position: relative;">
+        <select id="user-intermediary" name="user-intermediary" class="input-field" style="font-size: 0.8em;">
             <option value="" disabled selected hidden>Select Intermediary</option>
             <option value="Active Quote">🔴 Active Quote</option>
             <option value="Advo Group Ltd">🔵 Advo Group Ltd</option>
@@ -70,11 +108,10 @@
             <option value="Vizion Insurance Brokers Ltd">🔵 Vizion Insurance Brokers Ltd</option>
             <option value="Willis Towers Watson (WTW)">🔵 Willis Towers Watson (WTW)</option>
         </select>
-            <input type="text" id="intermediary-advisor" name="intermediary-advisor" placeholder="Intermediary Advisor" class="input-field" style="font-size: 0.8em;">
-            <input type="text" id="registration-number" name="registration-number" placeholder="Registration Number" class="input-field" style="font-size: 0.8em;">
-            <input type="date" id="renewal-date" name="renewal-date" placeholder="Renewal Date" class="input-field" style="font-size: 0.8em;">
-            <input type="number" id="annual-subs" name="annual-subs" placeholder="Total Annual Subs incl IPT" class="input-field" style="font-size: 0.8em;">
-            <select id="color-segment" name="color-segment" class="input-field" style="font-size: 0.8em;">
+            <input type="text" id="user-intermediary-advisor" name="user-intermediary-advisor" placeholder="Intermediary Advisor" class="input-field" style="font-size: 0.8em;">
+            <input type="date" id="user-renewal-date" name="user-renewal-date" placeholder="Renewal Date" class="input-field" style="font-size: 0.8em;">
+            <input type="number" id="user-annual-subs" name="user-annual-subs" placeholder="Total Annual Subs incl IPT" class="input-field" style="font-size: 0.8em;">
+            <select id="user-color-segment" name="user-color-segment" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Colour Segment</option>
                 <option value="Red">🔴 Red</option>
                 <option value="Green">🟢 Green</option>
@@ -85,30 +122,30 @@
                 <option value="Purple">🟣 Purple</option>
                 <option value="Missing">⚫ Missing</option>
             </select>
-            <select id="claims-paid" name="claims-paid" class="input-field" style="font-size: 0.8em;">
+            <select id="user-claims-paid" name="user-claims-paid" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Claims Paid in the Last Year</option>
                 <option value="Less Than £500">Less Than £500</option>
                 <option value="Between £500 and £1000">Between £500 and £1000</option>
                 <option value="More Than £1000">More Than £1000</option>
             </select>
-            <select id="payment-frequency" name="payment-frequency" class="input-field" style="font-size: 0.8em;">
+            <select id="user-payment-frequency" name="user-payment-frequency" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Payment Frequency</option>
                 <option value="Monthly">Monthly</option>
                 <option value="Annually">Annually</option>
             </select>
-            <select id="months-arrears" name="months-arrears" class="input-field" style="font-size: 0.8em;">
+            <select id="user-months-arrears" name="user-months-arrears" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Months in Arrears</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
             </select>
-            <select id="months-free-last" name="months-free-last" class="input-field" style="font-size: 0.8em;">
+            <select id="user-months-free-last" name="user-months-free-last" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Months Free Last Year</option>
                 <option value="No">No</option>
                 <option value="Yes">Yes</option>
             </select>
-            <select id="months-free-this" name="months-free-this" class="input-field" style="font-size: 0.8em;">
+            <select id="user-months-free-this" name="user-months-free-this" class="input-field" style="font-size: 0.8em;">
                 <option value="" disabled selected hidden>Months Free This Year</option>
                 <option value="0">0</option>
                 <option value="1">1</option>
@@ -119,54 +156,38 @@
     </div>
 </div>
 
-<div style="display: flex; justify-content: center; padding: 10px;">
-
-    <div id="grey-box" style="background-image: url('{{ url_for('static', filename='ai.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #f1efeb; min-width: 30vw; margin-right: 10px; height: 200px;">
-        <h3 style="margin-top: 35px;">Offers</h3>
-        <p>Offer: <span id="annual-subs-display" style="font-weight: bold;"></span></p>
-        <p>Value: <span id="value" style="font-weight: bold;"></span></p>
-        <p>Total Payable: <span id="total_payable" style="font-weight: bold;"></span></p>
-    </div>
-
-    <div id="track-outcomes-box" style="background-image: url('{{ url_for('static', filename='bupa_track.png') }}'); background-size: 50px; background-position: right 10px top 10px; background-repeat: no-repeat; background-color: white; padding: 10px; display: none; flex-direction: column; justify-content: flex-start; border-radius: 10px; border: 2px solid #0d1846; min-width: 30vw; height: 200px;">
-        <h3 style="margin-top: 35px;">Outcome</h3>
-        <form id="outcomes-form" style="display: grid; gap: 10px;">
-            <select id="offer" name="offer" class="input-field" style="font-size: 0.8em;" required>
-                <option value="" disabled selected hidden>Offer Proposed</option>
-                <option value="1 Month Free">1 Month Free</option>
-            </select>
-            <select id="offer-accepted" name="offer-accepted" class="input-field" style="font-size: 0.8em;" required>
-                <option value="" disabled selected hidden>Outcome</option>
-                <option value="Not Eligible for Offer">Not Eligible for Offer</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Maybe">Maybe</option>
-                <option value="Yes - With STM Override">Yes - With STM Override</option>
-                <option value="Maybe - With STM Override">Maybe - With STM Override</option>
-            </select>
-        </form>
-    </div>
-</div>
-
 <div style="display: flex; justify-content: space-between; padding: 10px;">
     <button id="submit-button" type="button" onclick="submitForm()" style="display: none; margin-left: auto;">Submit</button>
-    <button id="calculate-button" onclick="calculateOffer()" style="margin-left: auto;">Calculate</button>
+    <button id="calculate-button" type="button" onclick="calculateDiscount()" style="display: none; margin-left: auto;">Calculate</button>
+    <button id="find-button" type="button" onclick="findCustomer()" style="margin-left: auto;">Find</button>
 </div>
 
 <script>
     const formInputs = document.querySelectorAll('.input-field');
-    const annualSubsDisplay = document.getElementById('annual-subs-display');
+    const annualSubsDisplay = document.getElementById('new-annual-subs');
     const greyBox = document.getElementById('grey-box');
     const trackOutcomesBox = document.getElementById('track-outcomes-box');
     const formContainer = document.getElementById('form-container');
     const submitButton = document.getElementById('submit-button');
+    const findButton = document.getElementById('find-button');
     const calculateButton = document.getElementById('calculate-button');
+    const additionalFormContainer = document.getElementById('additional-form-container');
+
+    let currentGUID = ''; // Global variable to store the GUID
+    let customerData = {}; // Global variable to store the customer data
+
+    function generateGUID() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
     function submitForm() {
         const formDataUser = {};
         const formDataOutcomes = {};
         formInputs.forEach(input => {
-            if (input.form.id === 'user-form') {
+            if (input.form.id === 'user-form' || input.form.id === 'additional-user-form') {
                 formDataUser[input.name] = input.value.trim();
             } else if (input.form.id === 'outcomes-form') {
                 formDataOutcomes[input.name] = input.value.trim();
@@ -176,6 +197,7 @@
         const formData = {
             user_data: formDataUser,
             outcomes_data: formDataOutcomes,
+            guid: currentGUID, // Include the currentGUID in the formData
             url: window.location.href // Add the current URL to the formData
         };
 
@@ -188,21 +210,126 @@
         })
         .then(response => response.json())
         .then(data => {
-            alert(data.message);
-            location.reload();  // Refresh the page to clear the form
+            if (data.message) {
+                alert(data.message);
+                location.reload();
+            } else if (data.error) {
+                alert('Error: ' + data.error);
+            }
         })
         .catch(error => console.error('Error:', error));
     }
 
-    function calculateOffer() {
-        const formData = {}; // Initialize formData object
+    function findCustomer() {
+        const searchData = {}; // Initialize searchData object
+        searchData.guid = generateGUID();
+        currentGUID = searchData.guid; // Store the generated GUID in the global variable
+
         formInputs.forEach(input => {
-            formData[input.name] = input.value.trim();
+            if (input.form.id === 'user-form' || input.form.id === 'additional-user-form') {
+                searchData[input.name] = input.value.trim();
+            }
         });
+
+<!--        const inputs = formContainer.querySelectorAll('.input-field'); // Select all inputs within formContainer-->
+<!--        inputs.forEach(input => {-->
+<!--            if (input.form.id === 'user-form') {-->
+<!--                searchData[input.name] = input.value.trim();-->
+<!--            }-->
+<!--        });-->
+        searchData.url = window.location.href;
+        searchData.search_datetime = new Date().toISOString();
+
+        // Hide the find button immediately
+        findButton.style.display = 'none';
+
+        fetch('/find_customer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(searchData)
+        })
+        .then(response => {
+            if (response.status === 404) {
+                alert("Error: Customer not found.");
+                location.reload();
+            }
+
+            if (response.status === 400) {
+                alert("Error: Unable to calculate offer.");
+                location.reload();
+            }
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if there's an error message in the response
+            if (data.error) {
+                throw new Error(data.error); // Throw an error with the specific message
+            }
+
+            // Store the received customer data in the global variable
+            customerData = data;
+
+            // Hide the form container
+            formContainer.style.display = 'none';
+
+            // Show the calculate-button
+            calculateButton.style.display = 'inline-block';
+            additionalFormContainer.style.display = 'inline-block';
+
+            // Pre-populate additional form with KYC data
+            document.getElementById('user-renewal-date').value = formatDate(data.db_renewal);
+            document.getElementById('user-annual-subs').value = data.db_total_annual_subs;
+            document.getElementById('user-color-segment').value = data.db_segment;
+            document.getElementById('user-claims-paid').value = data.db_claims_paid;
+            document.getElementById('user-payment-frequency').value = data.db_payment_frequency;
+            document.getElementById('user-months-arrears').value = data.db_arrears;
+            document.getElementById('user-months-free-last').value = data.db_mf_last_year;
+            document.getElementById('user-months-free-this').value = data.db_mf_this_year;
+            document.getElementById('user-intermediary').value = data.db_intermediary;
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`; // Format as yyyy-mm-dd for the input type="date"
+    }
+
+    function calculateDiscount() {
+        // Show the track-outcomes box and submit button, hide the calculate-button
+        trackOutcomesBox.style.display = 'flex';
+        submitButton.style.display = 'inline-block';
+        calculateButton.style.display = 'none';
+        additionalFormContainer.style.display = 'none';
+
+        const formData = {}; // Initialize formData object
+        formData.guid = currentGUID; // Add the stored GUID to formData
+        formData.calculate_datetime = new Date().toISOString();
+        formData['registration-number'] = document.getElementById('user-registration-number').value;
+        formData['user-renewal-date'] = document.getElementById('user-renewal-date').value;
+        formData['user-payment-frequency'] = document.getElementById('user-payment-frequency').value;
+        formData['user-annual-subs'] = document.getElementById('user-annual-subs').value;
+        formData['user-months-arrears'] = document.getElementById('user-months-arrears').value;
+        formData['user-months-free-last'] = document.getElementById('user-months-free-last').value;
+        formData['user-months-free-this'] = document.getElementById('user-months-free-this').value;
+        formData['user-color-segment'] = document.getElementById('user-color-segment').value;
+        formData['user-claims-paid'] = document.getElementById('user-claims-paid').value;
+        formData['user-intermediary'] = document.getElementById('user-intermediary').value;
+        formData['user-intermediary-advisor'] = document.getElementById('user-intermediary-advisor').value;
+        Object.assign(formData, customerData);
         formData.url = window.location.href; // Get the current URL
 
-        // Hide the calculate button immediately
-        calculateButton.style.display = 'none';
+        // Hide the find button immediately
+        findButton.style.display = 'none';
 
         fetch('/calculate_offer', {
             method: 'POST',
@@ -211,40 +338,52 @@
             },
             body: JSON.stringify(formData)
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.result !== undefined) {
-                annualSubsDisplay.textContent = data.result;
-                document.getElementById('total_payable').textContent = data.total_payable;
-                document.getElementById('value').textContent = data.value;
-
-                // Set the border color based on offer_bin
-                if (data.eligible === 1) {
-                    greyBox.style.borderColor = 'green';
-                } else {
-                    greyBox.style.borderColor = 'red';
-                }
-
-                // Show the grey boxes and hide the form container
-                greyBox.style.display = 'flex';
-                trackOutcomesBox.style.display = 'flex';
-                formContainer.style.display = 'none';
-
-                // Show the Submit button
-                submitButton.style.display = 'inline-block';
-            } else {
-                annualSubsDisplay.textContent = 'Error: ' + data.error;
-                calculateButton.style.display = 'inline-block'; // Show the calculate button again if there is an error
+        .then(response => {
+            if (response.status === 404) {
+                alert("Error: Customer not found.");
+                location.reload();
             }
+
+            if (response.status === 400) {
+                alert("Error: Unable to calculate offer.");
+                location.reload();
+            }
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Check if there's an error message in the response
+            if (data.error) {
+                throw new Error(data.error); // Throw an error with the specific message
+            }
+
+            // Update UI with successful data
+            document.getElementById('db_registration_number').textContent = data.db_registration_number;
+            document.getElementById('new-annual-subs').textContent = data.result;
+            document.getElementById('total_payable').textContent = data.total_payable;
+            document.getElementById('value').textContent = data.value;
+
+            // Set the border color based on eligibility
+            greyBox.style.borderColor = data.eligible === 1 ? 'green' : 'red';
+
+            // Show the grey box with KYC details and hide the form container
+            greyBox.style.display = 'flex';
+            formContainer.style.display = 'none';
+
+            // Show the track outcomes box
+            trackOutcomesBox.style.display = 'flex';
         })
         .catch(error => {
             console.error('Error:', error);
-            calculateButton.style.display = 'inline-block'; // Show the calculate button again if there is an error
+            findButton.style.display = 'inline-block'; // Show the find button again if there is an error
         });
     }
 
     function validateForm() {
-        const registrationNumber = document.getElementById('registration-number').value;
+        const registrationNumber = document.getElementById('user-registration-number').value;
         if (registrationNumber === "") {
             alert("Please make sure Registration Number is valid.");
             return;
@@ -261,7 +400,6 @@
         greyBox.style.height = `${userFormHeight}px`;
         trackOutcomesBox.style.height = `${userFormHeight}px`;
     };
-
 </script>
 
 <style>

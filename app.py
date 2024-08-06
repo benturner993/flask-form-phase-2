@@ -1,13 +1,6 @@
 import pandas as pd
 import os
 
-# TO DO:
-# add in timestamps
-# make sure save functionality works as expected
-# make sure saved changes is captured (pre and post) long table
-# make sure that variable names are consistent
-# make sure that all pages work with new methodology
-
 from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 from calculator import (calculate_months, calculate_value,
@@ -21,55 +14,10 @@ db_schema_searches = f'{db}-searches.csv'
 db_schema_form = f'{db}-form.csv'
 db_schema_outcomes = f'{db}-outcomes.csv'
 
-# Load the customers CSV file into a DataFrame
+# load the customers CSV file into a DataFrame
 customers_df = pd.read_csv(f'data/{db_schema_customers}')
 
 app = Flask(__name__)
-
-def extract_user_info(data):
-    """
-    Extract user information from a given dictionary and return it in a standardized format.
-
-    Args:
-        data (dict): A dictionary containing user data with the following keys:
-            - 'registration-number' (str): Registration number as a string.
-            - 'renewal-date' (str): Renewal date in 'YYYY-MM-DD' format.
-            - 'payment-frequency' (str): Payment frequency.
-            - 'annual-subs' (str): Total annual subscriptions as a string.
-            - 'months-arrears' (str): Number of months in arrears as a string.
-            - 'months-free-last' (str): Number of months free last year.
-            - 'months-free-this' (str): Number of months free this year as a string.
-            - 'color-segment' (str): Color segment.
-            - 'claims-paid' (str): Claims paid.
-            - 'url' (str, optional): URL if available.
-
-    Returns:
-        dict: A dictionary with the following keys:
-            - 'registration' (float): Registration number as a float.
-            - 'renewal' (datetime): Renewal date as a datetime object.
-            - 'payment_frequency' (str): Payment frequency.
-            - 'total_annual_subs' (float): Total annual subscriptions as a float.
-            - 'arrears' (float): Number of months in arrears as a float.
-            - 'financial_distress' (int): Set to 0.
-            - 'mf_last_year' (str): Number of months free last year.
-            - 'mf_this_year' (float): Number of months free this year as a float.
-            - 'segment' (str): Color segment.
-            - 'claims_paid' (str): Claims paid.
-            - 'url' (str, optional): URL if available.
-    """
-    return {
-        'registration': float(data['user-registration-number']),
-        'renewal': datetime.strptime(data['user-renewal-date'], '%Y-%m-%d'),
-        'payment_frequency': data['user-payment-frequency'],
-        'total_annual_subs': float(data['user-annual-subs']),
-        'arrears': float(data['user-months-arrears']),
-        'financial_distress': 0,
-        'mf_last_year': str(data['user-months-free-last']),
-        'mf_this_year': float(data['user-months-free-this']),
-        'segment': str(data['user-color-segment']),
-        'claims_paid': str(data['user-claims-paid']),
-        'url': data.get('user-url')
-    }
 
 @app.route('/')
 def index():
@@ -124,7 +72,8 @@ def find_customer():
             'db_mf_last_year': str(customer_data['months-free-last']),
             'db_mf_this_year': float(customer_data['months-free-this']),
             'db_segment': str(customer_data['color-segment']),
-            'db_claims_paid': str(customer_data['claims-paid'])
+            'db_claims_paid': str(customer_data['claims-paid']),
+            'db_intermediary': str(customer_data['intermediary'])
                 })
     except Exception as e:
         print(e)
@@ -134,7 +83,41 @@ def find_customer():
 def calculate_offer():
 
     data = request.json
-    user_info = extract_user_info(data)
+    print(data)
+    if 'intermediary' in data['url']:
+
+        user_info = {
+            'registration-number': float(data['registration-number']),
+            'user-renewal-date': datetime.strptime(data['user-renewal-date'], '%Y-%m-%d'),
+            'user-payment-frequency': data['user-payment-frequency'],
+            'user-annual-subs': float(data['user-annual-subs']),
+            'user-months-arrears': float(data['user-months-arrears']),
+            'user-financial-distress': 0,
+            'user-months-free-last': str(data['user-months-free-last']),
+            'user-months-free-this': float(data['user-months-free-this']),
+            'user-color-segment': str(data['user-color-segment']),
+            'user-claims-paid': str(data['user-claims-paid']),
+            'user-intermediary': str(data['user-intermediary']),
+            'user-intermediary-advisor': str(data['user-intermediary-advisor']),
+            'url': data.get('url')
+        }
+
+    else:
+
+        user_info = {
+            'registration-number': float(data['registration-number']),
+            'user-renewal-date': datetime.strptime(data['user-renewal-date'], '%Y-%m-%d'),
+            'user-payment-frequency': data['user-payment-frequency'],
+            'user-annual-subs': float(data['user-annual-subs']),
+            'user-months-arrears': float(data['user-months-arrears']),
+            'user-financial-distress': 0,
+            'user-months-free-last': str(data['user-months-free-last']),
+            'user-months-free-this': float(data['user-months-free-this']),
+            'user-color-segment': str(data['user-color-segment']),
+            'user-claims-paid': str(data['user-claims-paid']),
+            'url': data.get('url')
+        }
+
     months_free = calculate_months_free(user_info)
     offer_bin, offer_str = eligibility(months_free)
     total_payable, value, formatted_total_payable, formatted_value = calculate_financials(user_info, months_free)
@@ -149,11 +132,12 @@ def calculate_offer():
                 data['user-color-segment'], data['user-claims-paid'], data['db_arrears'],
                 data['db_claims_paid'], data['db_financial_distress'], data['db_mf_last_year'],
                 data['db_mf_this_year'], data['db_payment_frequency'], data['db_registration_number'],
-                data['db_renewal'], data['db_segment'], data['db_total_annual_subs'], data['url']]
+                data['db_renewal'], data['db_segment'], data['db_total_annual_subs'],
+                datetime.now(), data['url']]
 
     if 'intermediary' in data['url']:
-        intermediary = data['intermediary']
-        intermediary_advisor = data['intermediary-advisor']
+        intermediary = data['user-intermediary']
+        intermediary_advisor = data['user-intermediary-advisor']
         row_data.extend([intermediary, intermediary_advisor])
     else:
         row_data.extend(['', ''])
@@ -161,7 +145,9 @@ def calculate_offer():
     # save to csv
     save_to_csv(csv_file_path, row_data)
 
-    return jsonify({
+    if 'intermediary' in data['url']:
+
+        output = jsonify({
         'result': offer_str,
         'eligible': offer_bin,
         'value': formatted_value,
@@ -175,26 +161,36 @@ def calculate_offer():
         'db_mf_last_year': user_info['user-months-free-last'],
         'db_mf_this_year': user_info['user-months-free-this'],
         'db_segment': user_info['user-color-segment'],
-        'db_claims_paid': user_info['user-claims-paid']
+        'db_claims_paid': user_info['user-claims-paid'],
+        'db_intermediary': user_info['user-intermediary'],
+        'db_intermediary_advisor': user_info['user-intermediary-advisor']
         # 'user_data': "data"
             })
 
+    else:
 
-def extract_user_info(data):
+        output = jsonify({
+        'result': offer_str,
+        'eligible': offer_bin,
+        'value': formatted_value,
+        'total_payable': formatted_total_payable,
+        'db_registration_number': user_info['registration-number'],
+        'db_renewal': user_info['user-renewal-date'],
+        'db_payment_frequency': user_info['user-payment-frequency'],
+        'db_total_annual_subs': user_info['user-annual-subs'],
+        'db_arrears': user_info['user-months-arrears'],
+        'db_financial_distress': user_info['user-financial-distress'],
+        'db_mf_last_year': user_info['user-months-free-last'],
+        'db_mf_this_year': user_info['user-months-free-this'],
+        'db_segment': user_info['user-color-segment'],
+        'db_claims_paid': user_info['user-claims-paid'],
+        # 'db_intermediary': user_info['user-intermediary'],
+        # 'db_intermediary_advisor': user_info['user-intermediary-advisor']
+        # 'user_data': "data"
+            })
 
-    return {
-        'registration-number': float(data['registration-number']),
-        'user-renewal-date': datetime.strptime(data['user-renewal-date'], '%Y-%m-%d'),
-        'user-payment-frequency': data['user-payment-frequency'],
-        'user-annual-subs': float(data['user-annual-subs']),
-        'user-months-arrears': float(data['user-months-arrears']),
-        'user-financial-distress': 0,
-        'user-months-free-last': str(data['user-months-free-last']),
-        'user-months-free-this': float(data['user-months-free-this']),
-        'user-color-segment': str(data['user-color-segment']),
-        'user-claims-paid': str(data['user-claims-paid']),
-        'url': data.get('url')
-    }
+    return output
+
 def calculate_months_free(user_info):
     return calculate_months(
         user_info['user-annual-subs'],
