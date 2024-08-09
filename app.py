@@ -11,7 +11,7 @@ from utils import save_to_csv
 db = 'consumer_retention'
 db_schema_customers = f'{db}-customers.csv'
 db_schema_searches = f'{db}-searches.csv'
-db_schema_form = f'{db}-form.csv'
+db_schema_form = f'{db}-registration-details.csv'
 db_schema_outcomes = f'{db}-outcomes.csv'
 
 # load the customers CSV file into a DataFrame

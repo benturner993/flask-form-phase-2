@@ -19,5 +19,10 @@ Use the below command to kill PID(s):
 
 Note: PID is always numeric. Ex:- kill -9 2882.
 
+### Build Customers dataset
+
+- Navigate to root directory
+- Run `python experiments/create_customers_data.py`
+
 ## Date
 Created in 2024Q2.
