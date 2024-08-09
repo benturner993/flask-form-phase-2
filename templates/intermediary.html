@@ -184,21 +184,17 @@
     }
 
     function submitForm() {
-        const formDataUser = {};
-        const formDataOutcomes = {};
-        formInputs.forEach(input => {
-            if (input.form.id === 'user-form' || input.form.id === 'additional-user-form') {
-                formDataUser[input.name] = input.value.trim();
-            } else if (input.form.id === 'outcomes-form') {
-                formDataOutcomes[input.name] = input.value.trim();
-            }
-        });
 
         const formData = {
-            user_data: formDataUser,
-            outcomes_data: formDataOutcomes,
-            guid: currentGUID, // Include the currentGUID in the formData
-            url: window.location.href // Add the current URL to the formData
+            guid: currentGUID,
+            currentDatetime: new Date().toISOString(),
+            webUrl: window.location.href,
+            registrationNumber : document.getElementById('user-registration-number').value,
+            userRenewalDate: document.getElementById('user-renewal-date').value,
+            userAnnualSubs: document.getElementById('user-annual-subs').value,
+            totalPayable: document.getElementById('total_payable').textContent.trim(),
+            customerOffer: document.getElementById('offer').value,
+            customerOfferAccepted: document.getElementById('offer-accepted').value,
         };
 
         fetch('/submit', {

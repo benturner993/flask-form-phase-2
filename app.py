@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify
 from datetime import datetime
 from calculator import (calculate_months, calculate_value,
                         eligibility, format_currency)
-from utils import save_to_csv
+from utils import (save_to_csv, save_transposed_to_csv)
 
 # static variables
 db = 'consumer_retention'
@@ -51,7 +51,7 @@ def find_customer():
         customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
 
         if customer.empty:
-            row_data = [guid, registration_number, url, pd.to_datetime(search_datetime), 'fail']
+            row_data = [guid, registration_number, url, pd.to_datetime(search_datetime)]
             save_to_csv(csv_file_path, row_data)
             return jsonify({'error': 'customer details empty'}), 404
 
@@ -59,7 +59,7 @@ def find_customer():
         customer_data = customer.to_dict(orient='records')[0]
 
         # write to csv
-        row_data = [guid, registration_number, url, pd.to_datetime(search_datetime), 'success']
+        row_data = [guid, registration_number, url, pd.to_datetime(search_datetime)]
         save_to_csv(csv_file_path, row_data)
 
         return jsonify({
@@ -123,27 +123,139 @@ def calculate_offer():
     total_payable, value, formatted_total_payable, formatted_value = calculate_financials(user_info, months_free)
 
     # write location for form db
-    csv_file_path = os.path.join('data', db_schema_form)
+    form_csv_file_path = os.path.join('data', db_schema_form)
 
-    # create data outputs as a list
-    row_data = [data['guid'], data['calculate_datetime'], data['registration-number'],
-                data['user-renewal-date'], data['user-payment-frequency'], data['user-annual-subs'],
-                data['user-months-arrears'], data['user-months-free-last'], data['user-months-free-this'],
-                data['user-color-segment'], data['user-claims-paid'], data['db_arrears'],
-                data['db_claims_paid'], data['db_financial_distress'], data['db_mf_last_year'],
-                data['db_mf_this_year'], data['db_payment_frequency'], data['db_registration_number'],
-                data['db_renewal'], data['db_segment'], data['db_total_annual_subs'],
-                datetime.now(), data['url']]
+    guid = data['guid']
+    source = 'user-input'
+
+    # Define the fields
+    fields = [
+        'registration-number',
+        'user-renewal-date',
+        'user-payment-frequency',
+        'user-annual-subs',
+        'user-months-arrears',
+        # 'user-financial-distress',
+        'user-months-free-last',
+        'user-months-free-this',
+        'user-color-segment',
+        'user-claims-paid',
+        'timestamp',
+        'user-intermediary',
+        'user-intermediary-advisor'
+    ]
 
     if 'intermediary' in data['url']:
-        intermediary = data['user-intermediary']
-        intermediary_advisor = data['user-intermediary-advisor']
-        row_data.extend([intermediary, intermediary_advisor])
-    else:
-        row_data.extend(['', ''])
 
-    # save to csv
-    save_to_csv(csv_file_path, row_data)
+        # Define the row data
+        row_data = [
+            data['registration-number'],
+            pd.to_datetime(data['user-renewal-date']),
+            data['user-payment-frequency'],
+            data['user-annual-subs'],
+            data['user-months-arrears'],
+            # data['user-financial-distress'],
+            data['user-months-free-last'],
+            data['user-months-free-this'],
+            data['user-color-segment'],
+            data['user-claims-paid'],
+            datetime.now(),
+            data['user-intermediary'],
+            data['user-intermediary-advisor']
+        ]
+    else:
+        # Define the row data
+        row_data = [
+            data['registration-number'],
+            pd.to_datetime(data['user-renewal-date']),
+            data['user-payment-frequency'],
+            data['user-annual-subs'],
+            data['user-months-arrears'],
+            # data['user-financial-distress'],
+            data['user-months-free-last'],
+            data['user-months-free-this'],
+            data['user-color-segment'],
+            data['user-claims-paid'],
+            datetime.now(),
+            '',
+            ''
+        ]
+
+    # Prepare transposed data
+    transposed_data = []
+    for field, value in zip(fields, row_data):
+        transposed_data.append([guid, source, field, value])
+
+    # Function to save transposed data to CSV
+    save_transposed_to_csv(form_csv_file_path, transposed_data)
+
+    # end of save 1
+
+    guid = data['guid']
+    source = 'database'
+
+    # Define the fields
+    fields = [
+        'registration-number',
+        'user-renewal-date',
+        'user-payment-frequency',
+        'user-annual-subs',
+        'user-months-arrears',
+        # 'user-financial-distress',
+        'user-months-free-last',
+        'user-months-free-this',
+        'user-color-segment',
+        'user-claims-paid',
+        'timestamp',
+        'user-intermediary',
+        'user-intermediary-advisor'
+    ]
+
+    if 'intermediary' in data['url']:
+
+        # Define the row data
+        row_data = [
+            data['db_registration_number'],
+            pd.to_datetime(data['db_renewal']),
+            data['db_payment_frequency'],
+            data['db_total_annual_subs'],
+            data['db_arrears'],
+            # data['db_financial_distress'],
+            data['db_mf_last_year'],
+            data['db_mf_this_year'],
+            data['db_segment'],
+            data['db_claims_paid'],
+            datetime.now(),
+            data['db_intermediary'],
+            # data['db_intermediary_advisor']
+        ]
+    else:
+        # Define the row data
+        row_data = [
+            data['db_registration_number'],
+            pd.to_datetime(data['db_renewal']),
+            data['db_payment_frequency'],
+            data['db_total_annual_subs'],
+            data['db_arrears'],
+            # data['db_financial_distress'],
+            data['db_mf_last_year'],
+            data['db_mf_this_year'],
+            data['db_segment'],
+            data['db_claims_paid'],
+            datetime.now(),
+            '',
+            ''
+        ]
+
+    # Prepare transposed data
+    transposed_data = []
+    for field, value in zip(fields, row_data):
+        transposed_data.append([guid, source, field, value])
+
+    # Function to save transposed data to CSV
+    save_transposed_to_csv(form_csv_file_path, transposed_data)
+
+    # end for json
 
     if 'intermediary' in data['url']:
 
@@ -153,7 +265,7 @@ def calculate_offer():
         'value': formatted_value,
         'total_payable': formatted_total_payable,
         'db_registration_number': user_info['registration-number'],
-        'db_renewal': user_info['user-renewal-date'],
+        'db_renewal': pd.to_datetime(user_info['user-renewal-date']),
         'db_payment_frequency': user_info['user-payment-frequency'],
         'db_total_annual_subs': user_info['user-annual-subs'],
         'db_arrears': user_info['user-months-arrears'],
@@ -175,7 +287,7 @@ def calculate_offer():
         'value': formatted_value,
         'total_payable': formatted_total_payable,
         'db_registration_number': user_info['registration-number'],
-        'db_renewal': user_info['user-renewal-date'],
+        'db_renewal': pd.to_datetime(user_info['user-renewal-date']),
         'db_payment_frequency': user_info['user-payment-frequency'],
         'db_total_annual_subs': user_info['user-annual-subs'],
         'db_arrears': user_info['user-months-arrears'],
@@ -218,13 +330,24 @@ def calculate_financials(user_info, months_free):
 @app.route('/submit', methods=['POST'])
 def submit_form():
     try:
-        user_data = request.json.get('user_data', {})
-        outcomes_data = request.json.get('outcomes_data', {})
-        guid = request.json.get('guid')
+        data = request.json
+        print(data)
+
         csv_file_path = os.path.join('data', db_schema_outcomes)
-        row_data = [guid, user_data['registration-number'], user_data['user-annual-subs'],
-                    outcomes_data['offer'], outcomes_data['offer-accepted'], datetime.now()]
-        save_to_csv(csv_file_path, row_data)
+
+        base_row_data = [
+            data['guid'],
+            pd.to_datetime(data['currentDatetime']),
+            data['webUrl'],
+            data['registrationNumber'],
+            data['userRenewalDate'],
+            data['userAnnualSubs'],
+            data['totalPayable'],
+            data['customerOffer'],
+            data['customerOfferAccepted']
+        ]
+
+        save_to_csv(csv_file_path, base_row_data)
 
         return jsonify({'message': 'Successfully submitted.'})
     except Exception as e:
