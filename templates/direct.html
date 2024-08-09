@@ -180,12 +180,12 @@
         })
         .then(response => {
             if (response.status === 404) {
-                alert("Error: Customer not found.");
+                alert("Error 404: Customer not found.");
                 location.reload();
             }
 
             if (response.status === 400) {
-                alert("Error: Unable to calculate offer.");
+                alert("Error 400:  Customer not found.");
                 location.reload();
             }
 

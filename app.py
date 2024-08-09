@@ -39,27 +39,21 @@ def training():
 def find_customer():
     try:
         data = request.json
-        guid = data.get('guid')
-        registration_number = data.get('registration-number')
-        url = data.get('url')
-        search_datetime = data.get('search_datetime')
 
         # write location for search db
         csv_file_path = os.path.join('data', db_schema_searches)
 
         # filter for relevant customer based on registration-number
-        customer = customers_df[customers_df['registration-number'].astype(str) == str(registration_number)]
+        customer = customers_df[customers_df['registration-number'].astype(str) == str(data['registration-number'])]
 
         if customer.empty:
-            row_data = [guid, registration_number, url, pd.to_datetime(search_datetime)]
-            save_to_csv(csv_file_path, row_data)
-            return jsonify({'error': 'customer details empty'}), 404
+            return jsonify({'Error 404': 'Customer details empty.'}), 404
 
         # retrieve user_info
         customer_data = customer.to_dict(orient='records')[0]
 
         # write to csv
-        row_data = [guid, registration_number, url, pd.to_datetime(search_datetime)]
+        row_data = [data['guid'], data['registration-number'], data['url'], pd.to_datetime(data['search_datetime'])]
         save_to_csv(csv_file_path, row_data)
 
         return jsonify({
