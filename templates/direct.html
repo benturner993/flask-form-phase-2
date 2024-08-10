@@ -9,7 +9,7 @@
 <div style="display: flex; justify-content: center; padding: 20px;">
     <div style="width: 50vw;" id="form-container">
         <form id="user-form" style="margin-top: 10px; margin-bottom: 10px;">
-            <input type="text" id="user-registration-number" name="registration-number" placeholder="Search for a Registration Number" class="input-field" style="font-size: 0.8em;">
+            <input type="text" id="user-registration-number" name="user-registration-number" placeholder="Search for a Registration Number" class="input-field" style="font-size: 0.8em;">
         </form>
     </div>
 </div>
@@ -241,7 +241,7 @@
         const formData = {}; // Initialize formData object
         formData.guid = currentGUID; // Add the stored GUID to formData
         formData.calculate_datetime = new Date().toISOString();
-        formData['registration-number'] = document.getElementById('user-registration-number').value;
+        formData['user-registration-number'] = document.getElementById('user-registration-number').value;
         formData['user-renewal-date'] = document.getElementById('user-renewal-date').value;
         formData['user-payment-frequency'] = document.getElementById('user-payment-frequency').value;
         formData['user-annual-subs'] = document.getElementById('user-annual-subs').value;

@@ -24,5 +24,33 @@ Note: PID is always numeric. Ex:- kill -9 2882.
 - Navigate to root directory
 - Run `python experiments/create_customers_data.py`
 
+### Variable Names
+
+'db_registration_number'
+'db_renewal'
+'db_payment_frequency'
+'db_total_annual_subs' # wrong
+'db_arrears' # wrong
+'db_financial_distress' # not included
+'db_mf_last_year' # wrong
+'db_mf_this_year' # wrong
+'db_segment' # wrong
+'db_claims_paid'
+'db_intermediary'
+
+'user-registration-number'
+'user-renewal-date'
+'user-payment-frequency'
+'user-annual-subs'
+'user-months-arrears'
+'user-months-free-last'
+'user-months-free-this'
+'user-color-segment'
+'user-claims-paid'
+'user-intermediary'
+'user-intermediary-advisor'
+
+
+
 ## Date
 Created in 2024Q2.
